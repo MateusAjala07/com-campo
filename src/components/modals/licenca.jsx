@@ -11,7 +11,7 @@ export default function ModalLicenca({ isOpen, setIsOpen }) {
   const [idDispositivo, setIdDispositivo] = useState("0.0.0.0.0.0.0.0.0");
   const [baseChave, setBaseChave] = useState("");
 
-  const {efetuarLiberacao, listarInformacoes} = useLicenca();
+  const { efetuarLiberacao, listarInformacoes } = useLicenca();
 
   async function handleLiberar() {
     try {
@@ -32,12 +32,7 @@ export default function ModalLicenca({ isOpen, setIsOpen }) {
 
   useEffect(() => {
     if (isOpen) {
-      listarInformacoes(
-        setIdDispositivo,
-        setChave,
-        setBaseChave,
-        setCodigoLiberacao,
-      );
+      listarInformacoes(setIdDispositivo, setChave, setBaseChave, setCodigoLiberacao);
     }
   }, [isOpen]);
 

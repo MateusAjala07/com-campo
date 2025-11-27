@@ -25,7 +25,15 @@ export default function useLicenca() {
     setBaseChave(base);
   }
 
-  async function verificarLiberacao(liberado, codigoLiberacao, baseChave, setLicenca, setBaseChave, setChave, setIdDispositivo) {
+  async function verificarLiberacao(
+    liberado,
+    codigoLiberacao,
+    baseChave,
+    setLicenca,
+    setBaseChave,
+    setChave,
+    setIdDispositivo,
+  ) {
     if (liberado) {
       await gravarLicenca(baseChave, codigoLiberacao);
       limparCampos(setLicenca, setChave, setIdDispositivo);
@@ -36,7 +44,14 @@ export default function useLicenca() {
     }
   }
 
-  async function efetuarLiberacao(licenca, setLicenca, baseChave, setBaseChave, setChave, setIdDispositivo) {
+  async function efetuarLiberacao(
+    licenca,
+    setLicenca,
+    baseChave,
+    setBaseChave,
+    setChave,
+    setIdDispositivo,
+  ) {
     try {
       if (!licenca) throw new Error("Informe o Código de Liberação");
 
@@ -50,7 +65,15 @@ export default function useLicenca() {
 
       if (liberado) setLicenca(codigoLiberacao);
 
-      return await verificarLiberacao(liberado, codigoLiberacao, baseChave, setLicenca, setBaseChave, setChave, setIdDispositivo);
+      return await verificarLiberacao(
+        liberado,
+        codigoLiberacao,
+        baseChave,
+        setLicenca,
+        setBaseChave,
+        setChave,
+        setIdDispositivo,
+      );
     } catch (error) {
       throw new Error(error.message);
     }

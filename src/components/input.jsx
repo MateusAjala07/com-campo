@@ -14,13 +14,15 @@ const Input = forwardRef(function Input(
     editable = true,
     ...rest
   },
-  ref
+  ref,
 ) {
   const [focused, setFocused] = useState(false);
 
   return (
     <View className={cn("w-full", classNameContainer)}>
-      {label && <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</Text>}
+      {label && (
+        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</Text>
+      )}
 
       <View
         className={cn(
@@ -28,7 +30,7 @@ const Input = forwardRef(function Input(
           editable ? "bg-white dark:bg-neutral-900" : "bg-neutral-100 dark:bg-neutral-800",
           focused ? "border-primary" : "border-gray-300",
           error && "border-red-500",
-          classNameInput
+          classNameInput,
         )}
       >
         {icon && <View>{icon}</View>}

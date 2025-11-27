@@ -30,11 +30,7 @@ export async function redeEServidorAtivo() {
 
   return {
     ativo: rede.ativo && servidor.ativo,
-    mensagem: !rede.ativo
-      ? rede.mensagem
-      : !servidor.ativo
-        ? servidor.mensagem
-        : "",
+    mensagem: !rede.ativo ? rede.mensagem : !servidor.ativo ? servidor.mensagem : "",
   };
 }
 
@@ -52,9 +48,7 @@ export async function listarInformacoesDispositivo() {
       model: Device.modelName,
     };
   } catch (error) {
-    throw new Error(
-      error.message || "Erro ao obter informações do dispositivo.",
-    );
+    throw new Error(error.message || "Erro ao obter informações do dispositivo.");
   }
 }
 

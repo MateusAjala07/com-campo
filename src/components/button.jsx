@@ -1,7 +1,15 @@
 import { TouchableOpacity, Text, View } from "react-native";
 import { cn } from "@/lib/utils";
 
-export default function Button({ texto = "", icon, variant = "default", textVariant, size = "default", classNameButton = "", ...rest }) {
+export default function Button({
+  texto = "",
+  icon,
+  variant = "default",
+  textVariant,
+  size = "default",
+  classNameButton = "",
+  ...rest
+}) {
   const variants = {
     default: "bg-primary",
     destructive: "bg-red-600",
@@ -36,9 +44,20 @@ export default function Button({ texto = "", icon, variant = "default", textVari
   const currentSize = sizes[size] || sizes.default;
 
   return (
-    <TouchableOpacity activeOpacity={0.8} className={cn("flex flex-row items-center justify-center gap-2", currentVariant, currentSize, classNameButton)} {...rest}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      className={cn(
+        "flex flex-row items-center justify-center gap-2",
+        currentVariant,
+        currentSize,
+        classNameButton,
+      )}
+      {...rest}
+    >
       {icon && <View>{icon}</View>}
-      {texto !== "" && <Text className={cn("text-center font-semibold text-base", currentText)}>{texto}</Text>}
+      {texto !== "" && (
+        <Text className={cn("text-center font-semibold text-base", currentText)}>{texto}</Text>
+      )}
     </TouchableOpacity>
   );
 }

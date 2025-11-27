@@ -25,28 +25,52 @@ export default function useLogin() {
   async function verificarPrimeiroAcesso() {
     try {
       const sistema = await loginDatabase.verificarSistema();
-      return !sistema ? { primeiroAcesso: true, sistema: null } : { primeiroAcesso: false, sistema };
+      return !sistema
+        ? { primeiroAcesso: true, sistema: null }
+        : { primeiroAcesso: false, sistema };
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
   function verificarConexaoGravada(setShowModalConexao) {
-    if (!storage.getString("descricaoConexao") || !storage.getString("ipConexao") || !storage.getString("portaConexao")) {
+    if (
+      !storage.getString("descricaoConexao") ||
+      !storage.getString("ipConexao") ||
+      !storage.getString("portaConexao")
+    ) {
       setShowModalConexao(true);
       return false;
     }
     return true;
   }
 
-  function carregarCampos(codusu, nomusu, senusu, setCodigo, setUsuario, setSenha, lembrarLogin, setLembrarLogin) {
+  function carregarCampos(
+    codusu,
+    nomusu,
+    senusu,
+    setCodigo,
+    setUsuario,
+    setSenha,
+    lembrarLogin,
+    setLembrarLogin,
+  ) {
     setCodigo(lembrarLogin === "S" ? String(codusu) : "");
     setUsuario(lembrarLogin === "S" ? nomusu : "");
     setSenha(lembrarLogin === "S" ? senusu : "");
     setLembrarLogin(lembrarLogin === "S" ? true : false);
   }
 
-  async function inicializarLogin(setShowModalLicenca, setShowModalConexao, setPrimeiroAcesso, setCodigo, setUsuario, setSenha, lembrarLogin, setLembrarLogin) {
+  async function inicializarLogin(
+    setShowModalLicenca,
+    setShowModalConexao,
+    setPrimeiroAcesso,
+    setCodigo,
+    setUsuario,
+    setSenha,
+    lembrarLogin,
+    setLembrarLogin,
+  ) {
     try {
       if (!(await validarLicenca(setShowModalLicenca))) return;
 
@@ -57,7 +81,16 @@ export default function useLogin() {
       if (acesso.primeiroAcesso) return;
 
       const { codusu, nomusu, senusu } = acesso.sistema;
-      carregarCampos(codusu, nomusu, senusu, setCodigo, setUsuario, setSenha, lembrarLogin, setLembrarLogin);
+      carregarCampos(
+        codusu,
+        nomusu,
+        senusu,
+        setCodigo,
+        setUsuario,
+        setSenha,
+        lembrarLogin,
+        setLembrarLogin,
+      );
     } catch (error) {
       throw new Error(error.message);
     }

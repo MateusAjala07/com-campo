@@ -7,9 +7,7 @@ export default function useLicencaDatabase() {
   async function verificarLicenca() {
     try {
       const dispositivo = await listarInformacoesDispositivo();
-      return await db.getFirstAsync(`SELECT * FROM licenca WHERE imei = ?`, [
-        dispositivo.id,
-      ]);
+      return await db.getFirstAsync(`SELECT * FROM licenca WHERE imei = ?`, [dispositivo.id]);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -19,10 +17,12 @@ export default function useLicencaDatabase() {
     try {
       let dispositivo = await listarInformacoesDispositivo();
       const ip = await listarIP();
-      await db.runAsync(
-        `INSERT INTO licenca (imei, ip, chave, codacesso) VALUES (?, ?, ?, ?)`,
-        [dispositivo.id, ip, pChave, pCodAcesso],
-      );
+      await db.runAsync(`INSERT INTO licenca (imei, ip, chave, codacesso) VALUES (?, ?, ?, ?)`, [
+        dispositivo.id,
+        ip,
+        pChave,
+        pCodAcesso,
+      ]);
     } catch (error) {
       throw new Error(error.message);
     }

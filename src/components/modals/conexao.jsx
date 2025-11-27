@@ -6,7 +6,12 @@ import Button from "../button";
 
 export default function ModalConexao({ isOpen, setIsOpen }) {
   return (
-    <Modal visible={isOpen} transparent animationType="fade" onRequestClose={() => setIsOpen(false)}>
+    <Modal
+      visible={isOpen}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setIsOpen(false)}
+    >
       <SafeAreaView
         style={{
           flex: 1,

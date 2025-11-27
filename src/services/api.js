@@ -14,9 +14,7 @@ function carregarConexao() {
 const conexao = carregarConexao();
 
 export const api = axios.create({
-  baseURL: conexao
-    ? `http://${conexao.ip}:${conexao.porta}/`
-    : "http://127.0.0.1:3000/",
+  baseURL: conexao ? `http://${conexao.ip}:${conexao.porta}/` : "http://127.0.0.1:3000/",
   auth: {
     username: "comsystem",
     password: "|dExE?0#ffltiruK",

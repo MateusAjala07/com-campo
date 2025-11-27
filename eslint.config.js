@@ -7,6 +7,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 export default [
   { ignores: ["dist", "build", ".expo", "node_modules"] },
   js.configs.recommended,
+  prettierConfig,
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     languageOptions: {
@@ -27,10 +28,13 @@ export default [
       react,
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      prettier,
     },
     rules: {
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+
+      "prettier/prettier": "warn",
 
       // ⚙️ Corrige falsos positivos de JSX não usado
       "no-unused-vars": ["warn", { varsIgnorePattern: "^[A-Z_]" }],
@@ -43,10 +47,7 @@ export default [
       "react-hooks/exhaustive-deps": "warn",
 
       // 🚀 Hot reload seguro
-      "react-refresh/only-export-components": [
-        "warn",
-        { allowConstantExport: true },
-      ],
+      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
 
       // 💅 Opcional: melhora legibilidade
       "no-mixed-spaces-and-tabs": "error",
