@@ -4,7 +4,7 @@ import { useSQLiteContext } from "expo-sqlite";
 export default function useLicencaDatabase() {
   const db = useSQLiteContext();
 
-  async function verificarLicenca() {
+  async function verificarLicencaLocal() {
     try {
       const dispositivo = await listarInformacoesDispositivo();
       return await db.getFirstAsync(`SELECT * FROM licenca WHERE imei = ?`, [dispositivo.id]);
@@ -13,7 +13,7 @@ export default function useLicencaDatabase() {
     }
   }
 
-  async function gravarLicenca(pChave, pCodAcesso) {
+  async function gravarLicencaLocal(pChave, pCodAcesso) {
     try {
       let dispositivo = await listarInformacoesDispositivo();
       const ip = await listarIP();
@@ -28,5 +28,5 @@ export default function useLicencaDatabase() {
     }
   }
 
-  return { verificarLicenca, gravarLicenca };
+  return { verificarLicencaLocal, gravarLicencaLocal };
 }

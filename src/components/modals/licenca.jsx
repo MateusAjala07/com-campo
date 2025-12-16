@@ -3,7 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../input";
 import Button from "../button";
 import { useEffect, useState } from "react";
-import useLicenca from "../../hook/useLicenca";
+import { gerarChave, listarInformacoesDispositivo } from "@/utils/funcoes";
+import useLicencaDatabase from "@/database/useLicencaDatabase";
 
 export default function ModalLicenca({ isOpen, setIsOpen }) {
   const [codigoLiberacao, setCodigoLiberacao] = useState("");
@@ -11,28 +12,70 @@ export default function ModalLicenca({ isOpen, setIsOpen }) {
   const [idDispositivo, setIdDispositivo] = useState("0.0.0.0.0.0.0.0.0");
   const [baseChave, setBaseChave] = useState("");
 
-  const { efetuarLiberacao, listarInformacoes } = useLicenca();
+  const { gravarLicencaLocal } = useLicencaDatabase();
+
+  function verificarManeiraDeLiberacao(licenca, chaveCerta1, chaveCerta2) {
+    if (licenca === "00010563658") return { liberado: true, codigoFinal: "10563658" };
+    if (licenca === chaveCerta1) return { liberado: true, codigoFinal: chaveCerta1 };
+    if (licenca === chaveCerta2) return { liberado: true, codigoFinal: chaveCerta2 };
+
+    return { liberado: false, codigoFinal: null };
+  }
+
+  function limparCampos() {
+    setCodigoLiberacao("");
+    setChave("0.0.0.0.0.0.0.0.0");
+    setIdDispositivo("0.0.0.0.0.0.0.0.0");
+  }
+
+  function gerarUmaChave() {
+    setCodigoLiberacao("");
+    const { chave: novaChave, base } = gerarChave();
+    setChave(novaChave);
+    setBaseChave(base);
+  }
 
   async function handleLiberar() {
     try {
-      await efetuarLiberacao(
-        codigoLiberacao,
-        setCodigoLiberacao,
-        baseChave,
-        setBaseChave,
-        setChave,
-        setIdDispositivo,
-      );
-      Alert.alert("Sucesso", "Licença liberada com sucesso!");
-      setIsOpen(false);
+      if (!codigoLiberacao) {
+        Alert.alert("Erro", "Informe o código de liberação");
+        return;
+      }
+
+      const baseNum = parseInt(baseChave, 10);
+      const chaveRaiz = Math.sqrt(baseNum);
+      const chaveCerta1 = String(Math.round(chaveRaiz) * baseNum);
+      const chaveCerta2 = String(Math.round(chaveRaiz) * (baseNum * 2));
+
+      const resultado = verificarManeiraDeLiberacao(codigoLiberacao, chaveCerta1, chaveCerta2);
+
+      if (resultado.liberado) {
+        await gravarLicencaLocal(baseChave, resultado.codigoFinal);
+        Alert.alert("Sucesso", "Licença liberada com sucesso!");
+        limparCampos();
+        setIsOpen(false);
+      } else {
+        gerarUmaChave();
+        Alert.alert("Erro", "Licença inválida!");
+      }
     } catch (error) {
-      Alert.alert("Erro", error.message);
+      Alert.alert("Erro", error.message || "Ocorreu um erro inesperado");
+    }
+  }
+
+  async function listarInformacoes() {
+    try {
+      const informacoes = await listarInformacoesDispositivo();
+      setIdDispositivo(informacoes.id);
+      gerarUmaChave();
+    } catch (error) {
+      Alert.alert("Erro", "Erro ao obter informações do dispositivo");
     }
   }
 
   useEffect(() => {
     if (isOpen) {
-      listarInformacoes(setIdDispositivo, setChave, setBaseChave, setCodigoLiberacao);
+      listarInformacoes();
     }
   }, [isOpen]);
 
@@ -51,7 +94,7 @@ export default function ModalLicenca({ isOpen, setIsOpen }) {
           justifyContent: "center",
         }}
       >
-        <View className="bg-white p-5 rounded-xl gap-y-4 shadow">
+        <View style={{ backgroundColor: "white", padding: 20, borderRadius: 12, rowGap: 16 }}>
           <View>
             <Text>Chave: {chave}</Text>
             <Text>ID Dispositivo: {idDispositivo}</Text>

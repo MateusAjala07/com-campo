@@ -1,4 +1,4 @@
-import { verificarServidor } from "@/services/api";
+import { consultarServidor } from "@/services/api";
 import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
 import * as Application from "expo-application";
@@ -13,7 +13,7 @@ export async function redeAtiva() {
 }
 
 export async function servidorAtivo() {
-  const status = await verificarServidor();
+  const status = await consultarServidor();
   return {
     ativo: status === 200,
     mensagem: status === 200 ? "" : "Servidor inativo!",
@@ -22,7 +22,6 @@ export async function servidorAtivo() {
 
 export async function redeEServidorAtivo() {
   let rede, servidor;
-
   rede = await redeAtiva();
   if (rede.ativo) {
     servidor = await servidorAtivo();

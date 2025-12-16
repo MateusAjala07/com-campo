@@ -21,11 +21,64 @@ export const api = axios.create({
   },
 });
 
-export async function verificarServidor() {
+export async function consultarServidor() {
   try {
-    const response = await api.get("api/");
+    const response = await api.get("index");
     return response.status;
   } catch (error) {
-    throw new Error(error.message || "Erro ao verificar o servidor.");
+    throw new Error(error.message || "Não foi possível conectar ao servidor.");
+  }
+}
+
+export async function consultarUsuarios() {
+  try {
+    const response = await api.get("appcomcampo/acesso/usuario");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível listar os usuarios.");
+  }
+}
+
+export async function consultarParametrosSistema() {
+  try {
+    // const response = await api.get("api/parametro/sistema");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível listar os parametros.");
+  }
+}
+
+export async function validarAcesso(pIdDispositivo, pChave, pCodLib) {
+  try {
+    const response = await api.post(`appcomcampo/acesso/validaracesso`, {
+      imei: pIdDispositivo,
+      chave: pChave,
+      codlib: pCodLib,
+    });
+    return response.data?.result?.toUpperCase();
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível validar o acesso.");
+  }
+}
+
+export async function gravarLicenca(pIdDispositivo, pChave, pCodLib) {
+  try {
+    const response = await api.post(`appcomcampo/acesso/gravarlicencaservidor`, {
+      imei: pIdDispositivo,
+      chave: pChave,
+      codlib: pCodLib,
+    });
+    return response.data?.result?.toUpperCase();
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível gravar a licenca.");
+  }
+}
+
+export async function consultarLogoEmpresa() {
+  try {
+    // const response = await api.get(`api/imagem/logoempresa`);
+    return response.request.responseURL;
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível listar a logo.");
   }
 }
