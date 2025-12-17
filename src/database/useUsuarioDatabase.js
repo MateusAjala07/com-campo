@@ -6,7 +6,7 @@ export default function useUsuarioDatabase() {
 
   async function consultarUsuarioLocal(codusu) {
     try {
-      const response = await db.getFirstAsync(`SELECT * FROM arqusuarios WHERE codusu = ?`, [
+      const response = await db.getFirstAsync(`SELECT * FROM tbusuarios WHERE codusu = ?`, [
         codusu,
       ]);
       return response;
@@ -18,7 +18,7 @@ export default function useUsuarioDatabase() {
   async function consultarUsuariosLocal() {
     try {
       return await db.getAllAsync(
-        `SELECT codusu,nomusu,senusu,ususuper,id,acessomobile,libcliblq,libdesven,idmotorista,codven,nommot FROM arqusuarios`,
+        `SELECT codusu,nomusu,senusu,ususuper,id,acessomobile FROM tbusuarios`,
       );
     } catch (error) {
       throw new Error(error.message);
@@ -27,24 +27,21 @@ export default function useUsuarioDatabase() {
 
   async function atualizarUsuariosLocal() {
     try {
-      await db.execAsync(`DELETE FROM arqusuarios`);
+      await db.execAsync(`DELETE FROM tbusuarios`);
       const usuarios = await consultarUsuarios();
 
       for (const usuario of usuarios) {
         await db.runAsync(
           `
-          INSERT INTO arqusuarios 
-            (codusu, nomusu, senusu, ususuper, libcliblq, libdesven, idmotorista, nommot, acessomobile) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          INSERT INTO tbusuarios 
+            (codusu, nomusu, senusu, ususuper, acessomobile) 
+          VALUES (?, ?, ?, ?, ?);
           `,
           [
             usuario.codusu,
             usuario.nomusu,
             usuario.senusu,
             usuario.ususuper,
-            usuario.libcliblq ?? 0,
-            usuario.libdesven ?? 0,
-            usuario.nommot ?? "",
             usuario.acessomobile ?? "N",
           ],
         );

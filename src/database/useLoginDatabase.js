@@ -5,11 +5,11 @@ import { createMMKV } from "react-native-mmkv";
 import useLicencaDatabase from "./useLicencaDatabase";
 import { codif } from "./../utils/funcoes";
 
-export default function useLoginDatabase() {
-  const storage = createMMKV({
-    id: "storage",
-  });
+const storage = createMMKV({
+  id: "storage",
+});
 
+export default function useLoginDatabase() {
   const db = useSQLiteContext();
   const { verificarLicencaLocal } = useLicencaDatabase();
 
@@ -18,7 +18,7 @@ export default function useLoginDatabase() {
       const usuario = await db.getFirstAsync(
         `
         SELECT acessomobile 
-          FROM arqusuarios 
+          FROM tbusuarios 
         WHERE codusu = ? 
         AND acessomobile = ?
         `,
@@ -29,7 +29,7 @@ export default function useLoginDatabase() {
         const login = await db.getFirstAsync(
           `
           SELECT * 
-            FROM arqusuarios 
+            FROM tbusuarios 
           WHERE codusu = ? 
           AND senusu = ?
           `,
@@ -37,12 +37,12 @@ export default function useLoginDatabase() {
         );
 
         if (login) {
-          let sistema = await db.getFirstAsync(`SELECT 1 FROM sistema`);
+          let sistema = await db.getFirstAsync(`SELECT 1 FROM tbsistema`);
 
           if (!sistema) {
             sistema = await db.getFirstAsync(
               `
-              INSERT INTO SISTEMA 
+              INSERT INTO tbsistema 
               (codusu,nomusu,senusu,lembrarlogin) 
               VALUES (?,?,?,?)
               `,
@@ -51,7 +51,7 @@ export default function useLoginDatabase() {
           } else {
             sistema = await db.getFirstAsync(
               `
-              UPDATE SISTEMA SET codusu = ?, nomusu = ?, senusu = ?, lembrarlogin = ?
+              UPDATE tbsistema SET codusu = ?, nomusu = ?, senusu = ?, lembrarlogin = ?
               `,
               [codusu, nomUsu, senUsu, lembrarLogin ? "S" : "N"],
             );
@@ -59,27 +59,10 @@ export default function useLoginDatabase() {
 
           return "SUCESSO";
         } else {
-          return "USUÁRIO NÃO ENCONTRADO";
+          return "SENHA INCORRETA";
         }
       } else {
         return "ACESSO NEGADO";
-      }
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  }
-
-  async function atualizarModuloSistemaLocal() {
-    try {
-      const sistema = await consultarParametrosSistema();
-      const gradeOrcamento = sistema.gradeorcamento;
-      storage.set("gradeOrcamento", gradeOrcamento);
-
-      const response = await db.getFirstAsync(`SELECT gradeorcamento FROM sistema`);
-      if (response && response.length > 0) {
-        await db.runAsync(`UPDATE sistema SET gradeorcamento = ?`, [gradeOrcamento]);
-      } else {
-        await db.runAsync(`INSERT INTO sistema (gradeorcamento) VALUES (?)`, [gradeOrcamento]);
       }
     } catch (error) {
       throw new Error(error.message);
@@ -98,14 +81,14 @@ export default function useLoginDatabase() {
 
       const usuario = await db.getFirstAsync(
         `
-        SELECT 1 FROM arqusuarios 
+        SELECT 1 FROM tbusuarios 
         WHERE codusu = ? 
         AND acessomobile = ?
         `,
         [codusu, acessomobile],
       );
 
-      if (Object.keys(usuario).length > 0) {
+      if (usuario && Object.keys(usuario).length > 0) {
         const response = await validarLoginLocal(codusu, senUsu, lembrarLogin, nomUsu);
 
         switch (response) {
@@ -114,12 +97,14 @@ export default function useLoginDatabase() {
             router.replace("/inicio");
             break;
 
-          case "USUÁRIO NÃO ENCONTRADO":
-            throw new Error("Usuário não encontrado!");
+          case "SENHA INCORRETA":
+            throw new Error("Senha incorreta!");
 
           case "ACESSO NEGADO":
             throw new Error("Acesso negado!");
         }
+      } else {
+        throw new Error("Usuário não tem permissão para usar o aplicativo!");
       }
     } catch (error) {
       throw new Error(error.message);
@@ -128,7 +113,7 @@ export default function useLoginDatabase() {
 
   async function verificarSistemaLocal() {
     try {
-      return await db.getFirstAsync(`SELECT * FROM SISTEMA`);
+      return await db.getFirstAsync(`SELECT * FROM tbsistema`);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -136,9 +121,8 @@ export default function useLoginDatabase() {
 
   async function validarAcessoLocal() {
     try {
-      const licenca = await verificarLicencaLocal();
-
-      const acesso = await validarAcesso(licenca.imei, licenca.chave, licenca.codacesso);      
+      const licenca = await verificarLicencaLocal();      
+      const acesso = await validarAcesso(licenca.imei, licenca.chave, licenca.codacesso);
 
       switch (acesso) {
         case "ACESSO_NEGADO":
@@ -172,7 +156,6 @@ export default function useLoginDatabase() {
 
   return {
     efetuarLoginLocal,
-    atualizarModuloSistemaLocal,
     verificarSistemaLocal,
     validarAcessoLocal,
   };

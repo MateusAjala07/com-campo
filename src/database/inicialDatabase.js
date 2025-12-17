@@ -30,7 +30,8 @@ export default async function inicialDatabase(db) {
         nomusu VARCHAR(45),
         senusu VARCHAR(25),
         nivelacesso INTEGER,
-        ususuper CHAR(1)
+        ususuper CHAR(1),
+        acessomobile CHAR(1) DEFAULT 'N'
       );      
     `);
   } catch (error) {

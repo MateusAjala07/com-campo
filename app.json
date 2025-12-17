@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "com_campo",
-    "slug": "com_campo",
+    "name": "ComCampo",
+    "slug": "com-campo",
+    "scheme": "com-campo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,7 +14,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.comsystem.com_campo"
     },
     "android": {
       "adaptiveIcon": {

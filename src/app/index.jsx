@@ -14,18 +14,23 @@ import ModalUsuarios from "@/components/modals/usuarios";
 import useLicencaDatabase from "@/database/useLicencaDatabase";
 import useSincronizar from "@/database/useSincronizar";
 import { createMMKV } from "react-native-mmkv";
+import { StatusBar } from "expo-status-bar";
+import useUsuarioDatabase from "@/database/useUsuarioDatabase";
+import Loading from "@/components/loading";
+
+const storage = createMMKV({
+  id: "storage",
+});
 
 export default function Login() {
-  const storage = createMMKV({
-    id: "storage",
-  });
-
   const [codigo, setCodigo] = useState("");
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
 
   const [isLembrarLogin, setIsLembrarLogin] = useState(false);
   const [isPrimeiroAcesso, setIsPrimeiroAcesso] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mensagemLoading, setMensagemLoading] = useState("");
 
   const [isModalLicencaOpen, setIsModalLicencaOpen] = useState(false);
   const [isModalConexaoOpen, setIsModalConexaoOpen] = useState(false);
@@ -34,6 +39,7 @@ export default function Login() {
   const { efetuarLoginLocal, verificarSistemaLocal } = useLoginDatabase();
   const { verificarLicencaLocal } = useLicencaDatabase();
   const { sincronizarLogin } = useSincronizar();
+  const { consultarUsuarioLocal } = useUsuarioDatabase();
 
   async function handleLogin() {
     try {
@@ -72,7 +78,6 @@ export default function Login() {
       !storage.getString("ipConexao") ||
       !storage.getString("portaConexao")
     ) {
-      setIsModalConexaoOpen(true);
       return false;
     }
     return true;
@@ -102,8 +107,52 @@ export default function Login() {
     }
   }
 
+  function limparCampos() {
+    setCodigo("");
+    setUsuario("");
+    setSenha("");
+  }
+
+  function handleBuscarUsuarios() {
+    if (isPrimeiroAcesso) return;
+    limparCampos();
+    setIsModalUsuariosOpen(true);
+  }
+
+  function handleUsuarioModal(item) {
+    setCodigo(String(item.codusu));
+    setUsuario(item.nomusu);
+    setIsModalUsuariosOpen(false);
+  }
+
+  async function onBuscarNomeUsuario() {
+    if (!codigo) {
+      setUsuario("");
+      return;
+    }
+
+    const response = await consultarUsuarioLocal(codigo);
+
+    if (!response) {
+      setUsuario("");
+      return;
+    }
+
+    setUsuario(response.nomusu);
+  }
+
   async function handleSincronizar() {
     try {
+      setMensagemLoading("Sincronizando...");
+      setIsLoading(true);
+
+      if (!verificarConexaoGravada()) {
+        return Alert.alert(
+          "Erro",
+          "Para realizar a sincronização, é necessária a conexão com um servidor.",
+        );
+      }
+
       const sincronizado = await sincronizarLogin();
 
       const ipConexao = storage.getString("ipConexao");
@@ -119,18 +168,33 @@ export default function Login() {
       }
     } catch (error) {
       Alert.alert("Erro", error.message);
+    } finally {
+      setIsLoading(false);
+      setMensagemLoading("");
     }
   }
+
+  useEffect(() => {
+    onBuscarNomeUsuario();
+  }, [codigo]);
 
   useEffect(() => {
     inicializarLogin();
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#0D4036", paddingHorizontal: 16 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8", paddingHorizontal: 16 }}>
+      <StatusBar style="dark" />
+
+      <Loading ativo={isLoading} mensagem={mensagemLoading} />
+
       <ModalLicenca isOpen={isModalLicencaOpen} setIsOpen={setIsModalLicencaOpen} />
       <ModalConexao isOpen={isModalConexaoOpen} setIsOpen={setIsModalConexaoOpen} />
-      <ModalUsuarios isOpen={isModalUsuariosOpen} setIsOpen={setIsModalUsuariosOpen} />
+      <ModalUsuarios
+        isOpen={isModalUsuariosOpen}
+        setIsOpen={setIsModalUsuariosOpen}
+        handleUsuario={handleUsuarioModal}
+      />
 
       <View className="items-center my-6">
         <TouchableOpacity onLongPress={() => setIsModalConexaoOpen(true)}>
@@ -147,17 +211,17 @@ export default function Login() {
                 onChangeText={setCodigo}
                 classNameContainer="flex-1"
                 label="Código"
-                icon={<User color="#8B9287" size={20} />}
+                icon={<User color="#6a7282" size={20} />}
                 keyboardType="numeric"
               />
+              <View className="justify-center self-center mt-5 items-center bg-primary h-12 w-12 rounded-full">
+                <Search color="#fff" size={24} onPress={handleBuscarUsuarios} />
+              </View>
               <Input
                 value={usuario}
                 onChangeText={setUsuario}
                 classNameContainer="flex-2"
                 label="Login"
-                icon={
-                  <Search color="#47a603" size={20} onPress={() => setIsModalUsuariosOpen(true)} />
-                }
                 editable={false}
               />
             </View>
@@ -166,7 +230,7 @@ export default function Login() {
               onChangeText={setSenha}
               label="Senha"
               secureTextEntry
-              icon={<Lock color="#8B9287" size={20} />}
+              icon={<Lock color="#6a7282" size={20} />}
             />
           </View>
           <View>
@@ -176,7 +240,7 @@ export default function Login() {
             <Checkbox
               value={isLembrarLogin}
               onValueChange={setIsLembrarLogin}
-              color={isLembrarLogin ? "#47a603" : "#8B9287"}
+              color={isLembrarLogin ? "#47a603" : "#6a7282"}
             />
             <Text>Lembrar Login?</Text>
           </View>
@@ -184,7 +248,7 @@ export default function Login() {
       </View>
 
       <View className="items-center mt-6 mb-2 gap-2">
-        <Text className="text-white">Versão 1.0.0</Text>
+        <Text className="text-gray-500">Versão 1.0.0</Text>
         <Button size="icon" icon={<RefreshCcw color={"#fff"} />} onPress={handleSincronizar} />
       </View>
     </SafeAreaView>

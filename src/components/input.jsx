@@ -8,9 +8,12 @@ const Input = forwardRef(function Input(
     icon,
     error,
     classNameContainer,
+    classNameContainerInput,
     classNameInput,
+    classNameLabel,
     placeholder,
     secureTextEntry,
+    onBlur,
     editable = true,
     ...rest
   },
@@ -21,7 +24,14 @@ const Input = forwardRef(function Input(
   return (
     <View className={cn("w-full", classNameContainer)}>
       {label && (
-        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</Text>
+        <Text
+          className={cn(
+            "text-sm font-medium text-gray-700 dark:text-gray-300 mb-1",
+            classNameLabel,
+          )}
+        >
+          {label}
+        </Text>
       )}
 
       <View
@@ -30,7 +40,7 @@ const Input = forwardRef(function Input(
           editable ? "bg-white dark:bg-neutral-900" : "bg-neutral-100 dark:bg-neutral-800",
           focused ? "border-primary" : "border-gray-300",
           error && "border-red-500",
-          classNameInput,
+          classNameContainerInput,
         )}
       >
         {icon && <View>{icon}</View>}
@@ -42,9 +52,16 @@ const Input = forwardRef(function Input(
           secureTextEntry={secureTextEntry}
           editable={editable}
           onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className={cn("flex-1 text-base text-black dark:text-white", !editable && "opacity-60")}
-          selectionColor="#47a603"
+          onBlur={(event) => {
+            if (onBlur) onBlur(event);
+            setFocused(false);
+          }}
+          className={cn(
+            "flex-1 text-base text-black dark:text-white",
+            !editable && "opacity-60",
+            classNameInput,
+          )}
+          selectionColor="#1a7dd7"
           {...rest}
         />
       </View>

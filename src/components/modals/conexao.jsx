@@ -9,9 +9,9 @@ import useLicencaDatabase from "@/database/useLicencaDatabase";
 import { api, gravarLicenca } from "@/services/api";
 import { redeEServidorAtivo } from "@/utils/funcoes";
 
-export default function ModalConexao({ isOpen, setIsOpen }) {
-  const storage = createMMKV({ id: "storage" });
+const storage = createMMKV({ id: "storage" });
 
+export default function ModalConexao({ isOpen, setIsOpen }) {
   const [descricao, setDescricao] = useState(storage.getString("descricaoConexao") || "");
   const [ip, setIp] = useState(storage.getString("ipConexao") || "");
   const [porta, setPorta] = useState(storage.getString("portaConexao") || "");
@@ -20,9 +20,9 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
   const { verificarLicencaLocal } = useLicencaDatabase();
 
   function validarDados() {
-    if (!descricao) throw Alert.alert("Erro", "Descrição não informada");
-    if (!ip) throw Alert.alert("Erro", "IP não informado");
-    if (!porta) throw Alert.alert("Erro", "Porta não informada");
+    if (!descricao) throw new Error("Descrição não informada");
+    if (!ip) throw new Error("IP não informado");
+    if (!porta) throw new Error("Porta não informada");
   }
 
   function configurarConexao() {
@@ -35,7 +35,7 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
 
   async function conectarServidor() {
     const responseLicenca = await verificarLicencaLocal();
-    if (!responseLicenca) throw Alert.alert("Erro", "Licença não encontrada");
+    if (!responseLicenca) throw new Error("Licença não encontrada localmente");
 
     const resultadoLicenca = await gravarLicenca(
       responseLicenca.imei,
@@ -44,13 +44,12 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
     );
 
     if (resultadoLicenca === "ERRO") {
-      throw Alert.alert("Erro", "Erro ao validar licença com o servidor");
+      throw new Error("Erro ao validar licença com o servidor");
     }
 
     const response = await validarAcessoLocal();
-    
     if (!response?.acesso) {
-      throw Alert.alert("Erro", response?.mensagem);
+      throw new Error(response?.mensagem || "Acesso local negado");
     }
   }
 
@@ -58,15 +57,19 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
     try {
       validarDados();
       configurarConexao();
+
+      const rede = await redeEServidorAtivo();
+      if (!rede.ativo) throw new Error(rede.mensagem);
+
       await conectarServidor();
 
-      const rede = await redeEServidorAtivo();            
-      if (!rede.ativo) throw Alert.alert(rede.mensagem)
-
-      Alert.alert("Sucesso", "Conexao gravada com sucesso!");
+      Alert.alert("Sucesso", "Conexão gravada com sucesso!");
       setIsOpen(false);
-    } catch (error) {      
-      Alert.alert("Erro", error.message);
+    } catch (error) {
+      storage.set("descricaoConexao", "");
+      storage.set("ipConexao", "");
+      storage.set("portaConexao", "");
+      Alert.alert("Erro", error.message || "Erro ao gravar a conexão");
     }
   }
 

@@ -6,25 +6,15 @@
 
 @theme {
   --color-primary: #47a603;
-  --color-secondary: #8b9287;
-  --color-background: #0d4036;
-  --color-texto: #232a29;
+  --color-secondary: #0d4036;
+  --color-background: #f4f6f8;
 }
 
 @layer components {
-  .inputContainer {
-    @apply flex-row items-center border border-gray-300 rounded-lg p-2 gap-2 w-full;
+  .texto-primario {
+    @apply text-2xl font-bold;
   }
-
-  .inputContainer:focus-within {
-    @apply border-primary ring-1 ring-primary;
-  }
-
-  .input {
-    @apply text-base flex-1 w-full bg-transparent;
-  }
-
-  .inputDisabled {
-    @apply bg-gray-100 cursor-not-allowed opacity-70;
+  .texto-secundario {
+    @apply text-lg font-semibold;
   }
 }
