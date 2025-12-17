@@ -77,7 +77,9 @@ export default function useLoginDatabase() {
     acessomobile = "S",
   ) {
     try {
-      if (!codusu || !senUsu || !nomUsu) throw new Error("Preencha todos os campos!");
+      if (!codusu) throw new Error("Preencha o código do usuário!");
+      if (!senUsu) throw new Error("Preencha a senha!");
+      if (!nomUsu) throw new Error("Usuário não encontrado!");
 
       const usuario = await db.getFirstAsync(
         `
@@ -94,6 +96,7 @@ export default function useLoginDatabase() {
         switch (response) {
           case "SUCESSO":
             storage.set("codUsu", codusu);
+            storage.set("nomUsu", nomUsu);
             router.replace("/inicio");
             break;
 
@@ -121,7 +124,7 @@ export default function useLoginDatabase() {
 
   async function validarAcessoLocal() {
     try {
-      const licenca = await verificarLicencaLocal();      
+      const licenca = await verificarLicencaLocal();
       const acesso = await validarAcesso(licenca.imei, licenca.chave, licenca.codacesso);
 
       switch (acesso) {

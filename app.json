@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ComCampo",
-    "slug": "com-campo",
+    "slug": "com_campo",
     "scheme": "com-campo",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,7 +15,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.comsystem.com_campo"
+      "bundleIdentifier": "com.comsystem.comcampo",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +28,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.comsystem.com_campo"
+      "package": "com.comsystem.comcampo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +38,16 @@
         "projectId": "3b0f4504-5706-47b0-b633-eea3a4eef15f"
       }
     },
-    "plugins": ["expo-router"]
+    "plugins": [
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ]
+    ]
   }
 }

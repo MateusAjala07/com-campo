@@ -1,30 +1,35 @@
-import { View, Modal, Text } from "react-native";
+import { View, Modal, Text, Pressable } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "@/components/button";
-import { LogOut, Wifi, WifiSync } from "lucide-react-native";
+import { LogOut, WifiSync } from "lucide-react-native";
 import { router } from "expo-router";
+import { createMMKV } from "react-native-mmkv";
+
+const storage = createMMKV({
+  id: "storage",
+});
 
 export default function MenuInicio({ isOpen, setIsOpen }) {
   return (
-    <>
-      <Modal
-        visible={isOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
+    <Modal
+      visible={isOpen}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setIsOpen(false)}
+    >
+      <Pressable
+        style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        onPress={() => setIsOpen(false)}
       >
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        >
-          <View className="bg-white shadow w-64 flex-1">
+        <SafeAreaView style={{ flex: 1 }}>          
+          <Pressable className="bg-white shadow w-64 flex-1" onPress={() => {}}>
             <View className="bg-secondary p-7">
-              <Text className="text-white">24 - Gabriel Zanatta</Text>
+              <Text className="text-white">{storage.getString("codUsu")} - {storage.getString("nomUsu")}</Text>
             </View>
+
             <Button variant="outline" texto="Sincronização" icon={<WifiSync color={"#99a1af"} />} />
+
             <View className="justify-end flex-1">
               <Button
                 variant="outline"
@@ -33,9 +38,9 @@ export default function MenuInicio({ isOpen, setIsOpen }) {
                 onPress={() => router.replace("/")}
               />
             </View>
-          </View>
+          </Pressable>
         </SafeAreaView>
-      </Modal>
-    </>
+      </Pressable>
+    </Modal>
   );
 }

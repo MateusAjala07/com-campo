@@ -17,7 +17,7 @@ export default function ModalUsuarios({ isOpen, setIsOpen, handleUsuario = () =>
       const response = await consultarUsuariosLocal();
       setData(response);
     } catch (error) {
-      Alert.alert("Erro", error.message);
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -31,7 +31,7 @@ export default function ModalUsuarios({ isOpen, setIsOpen, handleUsuario = () =>
     <Modal visible={isOpen}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8" }}>
         <Cabecalho titulo="Usuários" voltar={() => setIsOpen(false)} />
-        <SafeAreaView style={{ flex: 1, padding: 16 }}>
+        <SafeAreaView style={{ flex: 1 }}>
           <Lista
             data={data}
             loading={loading}

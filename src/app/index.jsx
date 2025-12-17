@@ -54,8 +54,9 @@ export default function Login() {
       const licenca = await verificarLicencaLocal();
       if (!licenca) {
         setIsModalLicencaOpen(true);
-        return;
+        return false;
       }
+      return true;
     } catch (error) {
       throw new Error(error.message);
     }
@@ -83,11 +84,11 @@ export default function Login() {
     return true;
   }
 
-  function carregarCampos(codusu, nomusu, senusu) {
-    setCodigo(isLembrarLogin === "S" ? String(codusu) : "");
-    setUsuario(isLembrarLogin === "S" ? nomusu : "");
-    setSenha(isLembrarLogin === "S" ? senusu : "");
-    setIsLembrarLogin(isLembrarLogin === "S" ? true : false);
+  function carregarCampos(codusu, nomusu, senusu, lembrarlogin) {
+    setCodigo(lembrarlogin === "S" ? String(codusu) : "");
+    setUsuario(lembrarlogin === "S" ? nomusu : "");
+    setSenha(lembrarlogin === "S" ? senusu : "");
+    setIsLembrarLogin(lembrarlogin === "S" ? true : false);
   }
 
   async function inicializarLogin() {
@@ -97,11 +98,13 @@ export default function Login() {
       if (!verificarConexaoGravada()) return;
 
       const acesso = await verificarPrimeiroAcesso();
+
       setIsPrimeiroAcesso(acesso.primeiroAcesso);
       if (acesso.primeiroAcesso) return;
 
-      const { codusu, nomusu, senusu } = acesso.sistema;
-      carregarCampos(codusu, nomusu, senusu);
+      const { codusu, nomusu, senusu, lembrarlogin } = acesso.sistema;
+
+      carregarCampos(codusu, nomusu, senusu, lembrarlogin);
     } catch (error) {
       Alert.alert("Erro", error.message);
     }
