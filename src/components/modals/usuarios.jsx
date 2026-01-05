@@ -7,19 +7,19 @@ import Lista from "../lista";
 
 export default function ModalUsuarios({ isOpen, setIsOpen, handleUsuario = () => {} }) {
   const { consultarUsuariosLocal } = useUsuarioDatabase();
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
-  const [error, setError] = useState("");
+  const [mensagemErro, setMensagemErro] = useState("");
 
   async function listarUsuarios() {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const response = await consultarUsuariosLocal();
       setData(response);
     } catch (error) {
-      setError(error.message);
+      setMensagemErro(error.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -34,8 +34,8 @@ export default function ModalUsuarios({ isOpen, setIsOpen, handleUsuario = () =>
         <SafeAreaView style={{ flex: 1 }}>
           <Lista
             data={data}
-            loading={loading}
-            error={error}
+            loading={isLoading}
+            error={mensagemErro}
             keyExtractor={(item) => item.codusu}
             renderItem={({ item }) => (
               <TouchableOpacity

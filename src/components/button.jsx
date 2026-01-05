@@ -44,7 +44,7 @@ export default function Button({
   const currentSize = sizes[size] || sizes.default;
 
   return (
-    <TouchableOpacity  
+    <TouchableOpacity
       activeOpacity={0.8}
       className={cn(
         "flex flex-row items-center justify-center gap-2",

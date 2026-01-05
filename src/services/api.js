@@ -32,7 +32,7 @@ export async function consultarServidor() {
 
 export async function consultarUsuarios() {
   try {
-    const response = await api.get("appcomcampo/acesso/usuario"); 
+    const response = await api.get("appcomcampo/acesso/usuario");
     return response.data;
   } catch (error) {
     throw new Error(error.message || "Não foi possível listar os usuarios.");
@@ -71,5 +71,14 @@ export async function gravarLicenca(pIdDispositivo, pChave, pCodLib) {
     return response.data?.result?.toUpperCase();
   } catch (error) {
     throw new Error(error.message || "Não foi possível gravar a licenca.");
+  }
+}
+
+export async function consultarFazendas() {
+  try {
+    const response = await api.get("appcomcampo/fazenda");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível listar as fazendas");
   }
 }

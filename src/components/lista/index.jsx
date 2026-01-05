@@ -37,7 +37,9 @@ export default function Lista({
       showsVerticalScrollIndicator={showsVerticalScrollIndicator}
       contentContainerClassName="p-4"
       className={cn("flex-1", className)}
-      refreshControl={onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined}
+      refreshControl={
+        onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+      }
     />
   );
 }

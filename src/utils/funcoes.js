@@ -3,6 +3,7 @@ import NetInfo from "@react-native-community/netinfo";
 import axios from "axios";
 import * as Application from "expo-application";
 import * as Device from "expo-device";
+import uuid from "react-native-uuid";
 
 export async function redeAtiva() {
   const state = await NetInfo.fetch();
@@ -101,4 +102,12 @@ export function codif(s) {
   }
 
   return text1;
+}
+
+export function ehNumeroValido(valor) {
+  return !isNaN(parseFloat(valor)) && isFinite(valor);
+}
+
+export function gerarGuid() {
+  return uuid.v4();
 }

@@ -97,7 +97,6 @@ export default function useLoginDatabase() {
           case "SUCESSO":
             storage.set("codUsu", codusu);
             storage.set("nomUsu", nomUsu);
-            router.replace("/inicio");
             break;
 
           case "SENHA INCORRETA":
@@ -150,6 +149,11 @@ export default function useLoginDatabase() {
           return { acesso: false, mensagem: "ERRO ao validar acesso ao app!" };
 
         case "SUCESSO":
+          await db.runAsync(
+            `
+              UPDATE tbsistema SET acessomobile = 'S';            
+            `,
+          );
           return { acesso: true, mensagem: "Acesso autorizado!" };
       }
     } catch (error) {

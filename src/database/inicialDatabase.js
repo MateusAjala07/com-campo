@@ -11,8 +11,6 @@ export default async function inicialDatabase(db) {
         nomusu VARCHAR(45),
         senusu VARCHAR(25),
         lembrarlogin CHAR(1) DEFAULT 'S',
-        ultatuestdep DATE,
-        horaultatuestdep CHAR(8),
         acessomobile CHAR(1) DEFAULT 'N'
       );
 
@@ -33,6 +31,43 @@ export default async function inicialDatabase(db) {
         ususuper CHAR(1),
         acessomobile CHAR(1) DEFAULT 'N'
       );      
+
+      CREATE TABLE IF NOT EXISTS tbregclima (
+        id           INTEGER NOT NULL ON CONFLICT ROLLBACK PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT,
+        guid         VARCHAR(50),
+        guid_sinc    VARCHAR(50),
+        datreg       DATE,
+        horreg       VARCHAR(8),
+        numcompeso   INTEGER default 0,
+        imei         VARCHAR(150),
+        idmobile     INTEGER default 0,
+        status       VARCHAR(1) default 'A',
+        idpluv       INTEGER default 0,
+        tempmin      FLOAT   default 0,
+        tempmed      FLOAT   default 0,
+        tempmax      FLOAT   default 0,
+        umidade      FLOAT   default 0,
+        precipitacao FLOAT   default 0,
+        lat          FLOAT   default 0,
+        lng          FLOAT   default 0,
+        sincronizarapp VARCHAR(1) default 'N',
+        codusuinc      INTEGER default 0,
+        nomusuinc      VARCHAR(50),
+        nsureg       VARCHAR(25),
+        id_sinc      INTEGER DEFAULT 4,
+        resptec      VARCHAR(50),
+        obsclima     VARCHAR(250),
+        data         date
+      );
+
+      CREATE TABLE IF NOT EXISTS tbfazenda (      
+        numcompeso INTEGER,
+        nomfazenda VARCHAR(50),
+        qualpesoliquido VARCHAR(1),
+        codremarm INTEGER,
+        codremlav INTEGER
+      );
+
     `);
   } catch (error) {
     throw new Error(error.message);

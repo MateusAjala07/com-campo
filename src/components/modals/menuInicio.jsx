@@ -22,10 +22,12 @@ export default function MenuInicio({ isOpen, setIsOpen }) {
         style={{ flex: 1, backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         onPress={() => setIsOpen(false)}
       >
-        <SafeAreaView style={{ flex: 1 }}>          
+        <SafeAreaView style={{ flex: 1 }}>
           <Pressable className="bg-white shadow w-64 flex-1" onPress={() => {}}>
             <View className="bg-secondary p-7">
-              <Text className="text-white">{storage.getString("codUsu")} - {storage.getString("nomUsu")}</Text>
+              <Text className="text-white">
+                {storage.getString("codUsu")} - {storage.getString("nomUsu")}
+              </Text>
             </View>
 
             <Button variant="outline" texto="Sincronização" icon={<WifiSync color={"#99a1af"} />} />

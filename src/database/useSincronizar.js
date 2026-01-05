@@ -1,6 +1,7 @@
 import { redeEServidorAtivo } from "@/utils/funcoes";
 import { createMMKV } from "react-native-mmkv";
 import useUsuarioDatabase from "./useUsuarioDatabase";
+import useFazendaDatabase from "./useFazendaDatabase";
 
 const storage = createMMKV({
   id: "storage",
@@ -8,6 +9,7 @@ const storage = createMMKV({
 
 export default function useSincronizar() {
   const { atualizarUsuariosLocal } = useUsuarioDatabase();
+  const { atualizarFazendasLocal } = useFazendaDatabase();
 
   async function sincronizarLogin() {
     try {
@@ -23,6 +25,7 @@ export default function useSincronizar() {
       }
 
       await atualizarUsuariosLocal();
+      await atualizarFazendasLocal();
 
       return { sucesso: true, mensagem: "Sincronização efetuada com sucesso!" };
     } catch (error) {

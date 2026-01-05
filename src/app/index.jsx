@@ -17,6 +17,11 @@ import { createMMKV } from "react-native-mmkv";
 import { StatusBar } from "expo-status-bar";
 import useUsuarioDatabase from "@/database/useUsuarioDatabase";
 import Loading from "@/components/loading";
+import { redeAtiva } from "@/utils/funcoes";
+import useFazendaDatabase from "@/database/useFazendaDatabase";
+import ModalFazendas from "@/components/modals/fazendas";
+import { router } from "expo-router";
+import Constants from "expo-constants";
 
 const storage = createMMKV({
   id: "storage",
@@ -35,15 +40,43 @@ export default function Login() {
   const [isModalLicencaOpen, setIsModalLicencaOpen] = useState(false);
   const [isModalConexaoOpen, setIsModalConexaoOpen] = useState(false);
   const [isModalUsuariosOpen, setIsModalUsuariosOpen] = useState(false);
+  const [isModalFazendasOpen, setIsModalFazendasOpen] = useState(false);
 
   const { efetuarLoginLocal, verificarSistemaLocal } = useLoginDatabase();
   const { verificarLicencaLocal } = useLicencaDatabase();
   const { sincronizarLogin } = useSincronizar();
   const { consultarUsuarioLocal } = useUsuarioDatabase();
+  const { atualizarFazendasLocal, consultarFazendasLocal, gravarPreferenciaFazendaLocal } =
+    useFazendaDatabase();
 
   async function handleLogin() {
     try {
+      if (await redeAtiva()) {
+        const agora = new Date();
+
+        const horas = String(agora.getHours()).padStart(2, "0");
+        const minutos = String(agora.getMinutes()).padStart(2, "0");
+        const segundos = String(agora.getSeconds()).padStart(2, "0");
+
+        const horario = `${horas}:${minutos}:${segundos}`;
+
+        storage.set("ultAtuEstDep", agora.toLocaleDateString("pt-BR"));
+        storage.set("horaUltAtuEstDep", horario);        
+      }
+
       await efetuarLoginLocal(codigo, usuario, senha, isLembrarLogin);
+
+      const fazendas = await consultarFazendasLocal();
+      if (fazendas.length === 1) {
+        if (fazendas[0].numcompeso > 0) {
+          storage.set("numCompeso", fazendas[0].numcompeso);
+          storage.set("nomFazenda", fazendas[0].nomfazenda);
+
+          router.replace("/inicio");
+        }
+      } else {
+        setIsModalFazendasOpen(true);
+      }
     } catch (error) {
       Alert.alert("Erro", error.message);
     }
@@ -177,6 +210,13 @@ export default function Login() {
     }
   }
 
+  async function handleFazenda(e) {
+    storage.set("numCompeso", e.numcompeso);
+    storage.set("nomFazenda", e.nomfazenda);
+    await gravarPreferenciaFazendaLocal();
+    router.replace("/inicio");
+  }
+
   useEffect(() => {
     onBuscarNomeUsuario();
   }, [codigo]);
@@ -198,10 +238,15 @@ export default function Login() {
         setIsOpen={setIsModalUsuariosOpen}
         handleUsuario={handleUsuarioModal}
       />
+      <ModalFazendas
+        isOpen={isModalFazendasOpen}
+        setIsOpen={setIsModalFazendasOpen}
+        handleFazenda={handleFazenda}
+      />
 
       <View className="items-center my-6">
         <TouchableOpacity onLongPress={() => setIsModalConexaoOpen(true)}>
-          <Image className="w-[150px] h-[150px]" source={Logo} alt="Logo" />
+          <Image className="w-36 h-36" source={Logo} alt="Logo" />
         </TouchableOpacity>
       </View>
 
@@ -251,7 +296,7 @@ export default function Login() {
       </View>
 
       <View className="items-center mt-6 mb-2 gap-2">
-        <Text className="text-gray-500">Versão 1.0.0</Text>
+        <Text className="text-gray-500">Versão {Constants.expoConfig.version}</Text>
         <Button size="icon" icon={<RefreshCcw color={"#fff"} />} onPress={handleSincronizar} />
       </View>
     </SafeAreaView>

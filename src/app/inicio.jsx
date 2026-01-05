@@ -6,6 +6,11 @@ import { View } from "react-native";
 import React, { useState } from "react";
 import { CloudSunRain, Fuel, MapPinned, Package, PackageOpen } from "lucide-react-native";
 import MenuInicio from "@/components/modals/menuInicio";
+import { createMMKV } from "react-native-mmkv";
+
+const storage = createMMKV({
+  id: "storage",
+});
 
 export default function Inicio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,7 +20,11 @@ export default function Inicio() {
       {isMenuOpen && <MenuInicio isOpen={isMenuOpen} setIsOpen={setIsMenuOpen} />}
 
       <StatusBar style="auto" />
-      <Cabecalho titulo="ComCampo" voltar={false} menu={() => setIsMenuOpen(!isMenuOpen)} />
+      <Cabecalho
+        titulo={storage.getString("nomFazenda")}
+        voltar={false}
+        menu={() => setIsMenuOpen(!isMenuOpen)}
+      />
       <View className="p-4 flex flex-row gap-2 flex-wrap">
         <CardIcone
           icon={<MapPinned size={30} color={"#47a603"} />}
@@ -24,8 +33,8 @@ export default function Inicio() {
         />
         <CardIcone
           icon={<CloudSunRain size={30} color={"#47a603"} />}
-          texto="Climáticos"
-          navigate="/climaticos"
+          texto="Reg. Climáticos"
+          navigate="/registros-climaticos"
         />
         <CardIcone
           icon={<Fuel size={30} color={"#47a603"} />}
