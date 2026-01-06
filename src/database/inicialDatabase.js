@@ -35,7 +35,6 @@ export default async function inicialDatabase(db) {
       CREATE TABLE IF NOT EXISTS tbregclima (
         id           INTEGER NOT NULL ON CONFLICT ROLLBACK PRIMARY KEY ON CONFLICT ROLLBACK AUTOINCREMENT,
         guid         VARCHAR(50),
-        guid_sinc    VARCHAR(50),
         datreg       DATE,
         horreg       VARCHAR(8),
         numcompeso   INTEGER default 0,

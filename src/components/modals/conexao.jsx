@@ -6,7 +6,7 @@ import Button from "@/components/button";
 import { createMMKV } from "react-native-mmkv";
 import useLoginDatabase from "@/database/useLoginDatabase";
 import useLicencaDatabase from "@/database/useLicencaDatabase";
-import { api, gravarLicenca } from "@/services/api";
+import { api, gravarLicencaServidor } from "@/services/api";
 import { redeEServidorAtivo } from "@/utils/funcoes";
 
 const storage = createMMKV({ id: "storage" });
@@ -37,7 +37,7 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
     const responseLicenca = await verificarLicencaLocal();
     if (!responseLicenca) throw new Error("Licença não encontrada localmente");
 
-    const resultadoLicenca = await gravarLicenca(
+    const resultadoLicenca = await gravarLicencaServidor(
       responseLicenca.imei,
       responseLicenca.chave,
       responseLicenca.codacesso,

@@ -6,11 +6,7 @@ import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { ehNumeroValido, gerarGuid } from "@/utils/funcoes";
 import useRegistrosClimaticosDatabase from "@/database/useRegistrosClimaticosDatabase";
-import { createMMKV } from "react-native-mmkv";
-
-const storage = createMMKV({
-  id: "storage",
-});
+import { alerta } from "../alerta";
 
 export default function ModalRegistrarClima({
   isOpen,
@@ -28,7 +24,8 @@ export default function ModalRegistrarClima({
 }) {
   const [isCalendarioOpen, setIsCalenarioOpen] = useState(false);
 
-  const { registrarClima, editarClima } = useRegistrosClimaticosDatabase();
+  const { registrarRegistrosClimaticosLocal, editarRegistrosClimaticosLocal } =
+    useRegistrosClimaticosDatabase();
 
   function verificarCampos() {
     if (!pluviometro) {
@@ -48,19 +45,30 @@ export default function ModalRegistrarClima({
     }
   }
 
-  async function handleRegistrarClima() {
+  async function handleSalvar() {
     try {
       verificarCampos();
       if (acao === "adicionar") {
         const guid = gerarGuid();
-        await registrarClima(guid, pluviometro, precipitacao, dataFormatada);
+        await registrarRegistrosClimaticosLocal(guid, pluviometro, precipitacao, dataFormatada);
       } else if (acao === "editar") {
-        editarClima(guidRegistro, pluviometro, precipitacao, dataFormatada);
+        editarRegistrosClimaticosLocal(guidRegistro, pluviometro, precipitacao, dataFormatada);
       }
       setIsOpen(false);
     } catch (error) {
       Alert.alert("ERRO", error.message);
     }
+  }
+
+  async function handleCancelar() {
+    alerta({
+      title: "Atenção",
+      message: "Deseja cancelar o lançamento?",
+      textYes: "SIM",
+      textNo: "NÃO",
+      onYes: () => setIsOpen(false),
+      cancelable: true,
+    });
   }
 
   function onSelecionarData(event, selectedDate) {
@@ -125,8 +133,8 @@ export default function ModalRegistrarClima({
               />
             </View>
             <View className="gap-y-2">
-              <Button texto="Salvar" onPress={handleRegistrarClima} />
-              <Button texto="Cancelar" variant="outline" onPress={() => setIsOpen(false)} />
+              <Button texto="Salvar" onPress={handleSalvar} />
+              <Button texto="Cancelar" variant="outline" onPress={handleCancelar} />
             </View>
           </View>
         </SafeAreaView>

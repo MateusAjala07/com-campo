@@ -30,7 +30,7 @@ export async function consultarServidor() {
   }
 }
 
-export async function consultarUsuarios() {
+export async function consultarUsuariosServidor() {
   try {
     const response = await api.get("appcomcampo/acesso/usuario");
     return response.data;
@@ -39,16 +39,7 @@ export async function consultarUsuarios() {
   }
 }
 
-export async function consultarParametrosSistema() {
-  try {
-    // const response = await api.get("api/parametro/sistema");
-    return response.data;
-  } catch (error) {
-    throw new Error(error.message || "Não foi possível listar os parametros.");
-  }
-}
-
-export async function validarAcesso(pIdDispositivo, pChave, pCodLib) {
+export async function validarAcessoServidor(pIdDispositivo, pChave, pCodLib) {
   try {
     const response = await api.post(`appcomcampo/acesso/validaracesso`, {
       imei: pIdDispositivo,
@@ -61,7 +52,7 @@ export async function validarAcesso(pIdDispositivo, pChave, pCodLib) {
   }
 }
 
-export async function gravarLicenca(pIdDispositivo, pChave, pCodLib) {
+export async function gravarLicencaServidor(pIdDispositivo, pChave, pCodLib) {
   try {
     const response = await api.post(`appcomcampo/acesso/gravarlicencaservidor`, {
       imei: pIdDispositivo,
@@ -74,11 +65,37 @@ export async function gravarLicenca(pIdDispositivo, pChave, pCodLib) {
   }
 }
 
-export async function consultarFazendas() {
+export async function consultarFazendasServidor() {
   try {
     const response = await api.get("appcomcampo/fazenda");
     return response.data;
   } catch (error) {
     throw new Error(error.message || "Não foi possível listar as fazendas");
+  }
+}
+
+export async function consultarRegistrosClimaticosServidor() {
+  try {
+    const response = await api.get("comcampo/registros-climaticos");
+    return response.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function registrarRegistrosClimaticosServidor(registrosClimaticos) {
+  try {
+    const registrosClimaticosString = JSON.stringify(registrosClimaticos);
+    await api.post("comcampo/registros-climaticos", { regclima: registrosClimaticosString });
+  } catch (error) {
+    throw new Error(error.message || "Não foi possível registrar os lançamentos");
+  }
+}
+
+export async function excluirRegistroClimaticoServidor(pGuid) {
+  try {
+    await api.delete(`comcampo/registros-climaticos/${pGuid}`);
+  } catch (error) {
+    throw new Error(error.message || "Erro ao excluir registro");
   }
 }

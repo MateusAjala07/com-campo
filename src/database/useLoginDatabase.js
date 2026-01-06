@@ -1,6 +1,5 @@
 import { useSQLiteContext } from "expo-sqlite";
-import { router } from "expo-router";
-import { consultarParametrosSistema, validarAcesso } from "@/services/api";
+import { validarAcessoServidor } from "@/services/api";
 import { createMMKV } from "react-native-mmkv";
 import useLicencaDatabase from "./useLicencaDatabase";
 import { codif } from "./../utils/funcoes";
@@ -124,7 +123,7 @@ export default function useLoginDatabase() {
   async function validarAcessoLocal() {
     try {
       const licenca = await verificarLicencaLocal();
-      const acesso = await validarAcesso(licenca.imei, licenca.chave, licenca.codacesso);
+      const acesso = await validarAcessoServidor(licenca.imei, licenca.chave, licenca.codacesso);
 
       switch (acesso) {
         case "ACESSO_NEGADO":

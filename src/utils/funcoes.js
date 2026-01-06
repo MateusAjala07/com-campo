@@ -111,3 +111,12 @@ export function ehNumeroValido(valor) {
 export function gerarGuid() {
   return uuid.v4();
 }
+
+export function gerarTimestampAtual() {
+  const agora = new Date();
+  const horas = String(agora.getHours()).padStart(2, "0");
+  const minutos = String(agora.getMinutes()).padStart(2, "0");
+  const segundos = String(agora.getSeconds()).padStart(2, "0");
+
+  return `${horas}:${minutos}:${segundos}`;
+}

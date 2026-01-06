@@ -1,4 +1,4 @@
-import { consultarUsuarios } from "@/services/api";
+import { consultarUsuariosServidor } from "@/services/api";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function useUsuarioDatabase() {
@@ -28,7 +28,7 @@ export default function useUsuarioDatabase() {
   async function atualizarUsuariosLocal() {
     try {
       await db.execAsync(`DELETE FROM tbusuarios`);
-      const usuarios = await consultarUsuarios();
+      const usuarios = await consultarUsuariosServidor();
 
       for (const usuario of usuarios) {
         await db.runAsync(

@@ -1,4 +1,4 @@
-import { consultarFazendas } from "@/services/api";
+import { consultarFazendasServidor } from "@/services/api";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function useFazendaDatabase() {
@@ -15,7 +15,7 @@ export default function useFazendaDatabase() {
   }
 
   async function atualizarFazendasLocal() {
-    const response = await consultarFazendas();
+    const response = await consultarFazendasServidor();
     if (response.length > 0) {
       db.runAsync("DELETE FROM tbfazenda");
 
