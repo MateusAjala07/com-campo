@@ -1,39 +1,32 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
+import { ChevronLeft, Menu, RotateCcw } from "lucide-react-native";
+import Button from "./button";
 
 export default function Cabecalho({
   titulo = "",
   voltar = true,
   menu = false,
   atualizar = false,
-  icon = <Ionicons name="refresh-outline" size={24} />,
+  icon = <RotateCcw />,
 }) {
   return (
     <View className="flex-row items-center p-4 bg-secondary">
       {voltar && (
-        <TouchableOpacity
-          className="bg-background p-2 rounded-full"
+        <Button
+          icon={<ChevronLeft />}
+          size="icon"
+          variant="secondary"
           onPress={voltar === true ? () => router.back() : voltar}
-        >
-          <Ionicons name="arrow-back-outline" size={24} />
-        </TouchableOpacity>
+        />
       )}
 
-      {menu && (
-        <TouchableOpacity className="bg-background p-2 rounded-full" onPress={menu}>
-          <Ionicons name="menu-outline" size={24} />
-        </TouchableOpacity>
-      )}
+      {menu && <Button icon={<Menu />} size="icon" variant="secondary" onPress={menu} />}
 
       <Text className="texto-primario text-white flex-1 text-center">{titulo}</Text>
 
-      {atualizar && (
-        <TouchableOpacity className="bg-background p-2 rounded-full" onPress={atualizar}>
-          {icon}
-        </TouchableOpacity>
-      )}
+      {atualizar && <Button icon={icon} variant="secondary" size="icon" onPress={atualizar} />}
     </View>
   );
 }

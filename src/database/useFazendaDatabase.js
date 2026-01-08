@@ -1,4 +1,5 @@
 import { consultarFazendasServidor } from "@/services/api";
+import { redeEServidorAtivo } from "@/utils/funcoes";
 import { useSQLiteContext } from "expo-sqlite";
 
 export default function useFazendaDatabase() {
@@ -15,20 +16,36 @@ export default function useFazendaDatabase() {
   }
 
   async function atualizarFazendasLocal() {
-    const response = await consultarFazendasServidor();
-    if (response.length > 0) {
-      db.runAsync("DELETE FROM tbfazenda");
+    try {
+      const redeEServidor = await redeEServidorAtivo();
+      if (!redeEServidor.ativo) return;
 
-      for (const fazenda of response) {
-        await db.runAsync(
-          `
-            INSERT INTO tbfazenda 
+      const fazendas = await consultarFazendasServidor();
+      await db.runAsync("BEGIN");
+
+      try {
+        await db.runAsync("DELETE FROM tbfazenda");
+
+        if (fazendas.length > 0) {
+          for (const fazenda of fazendas) {
+            await db.runAsync(
+              `
+              INSERT INTO tbfazenda 
               (numcompeso, nomfazenda) 
-            VALUES (?, ?);
-          `,
-          [fazenda.numcompeso, fazenda.nomfazenda],
-        );
+              VALUES (?, ?);
+              `,
+              [fazenda.numcompeso, fazenda.nomfazenda],
+            );
+          }
+        }
+
+        await db.runAsync("COMMIT");
+      } catch (error) {
+        await db.runAsync("ROLLBACK");
+        throw error;
       }
+    } catch (error) {
+      throw new Error("Erro ao sincronizar fazendas:", error);
     }
   }
 
@@ -37,8 +54,8 @@ export default function useFazendaDatabase() {
       `
         UPDATE tbsistema
         SET numcompeso = ?, 
-            nomfazenda = ?     
-      `,
+        nomfazenda = ?     
+        `,
       [pNumCompeso, pNomFazenda],
     );
   }

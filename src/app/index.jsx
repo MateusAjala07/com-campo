@@ -17,7 +17,7 @@ import { createMMKV } from "react-native-mmkv";
 import { StatusBar } from "expo-status-bar";
 import useUsuarioDatabase from "@/database/useUsuarioDatabase";
 import Loading from "@/components/loading";
-import { redeAtiva } from "@/utils/funcoes";
+import { redeEServidorAtivo } from "@/utils/funcoes";
 import useFazendaDatabase from "@/database/useFazendaDatabase";
 import ModalFazendas from "@/components/modals/fazendas";
 import { router } from "expo-router";
@@ -46,12 +46,13 @@ export default function Login() {
   const { verificarLicencaLocal } = useLicencaDatabase();
   const { sincronizarLogin } = useSincronizar();
   const { consultarUsuarioLocal } = useUsuarioDatabase();
-  const { atualizarFazendasLocal, consultarFazendasLocal, gravarPreferenciaFazendaLocal } =
+  const { consultarFazendasLocal, gravarPreferenciaFazendaLocal } =
     useFazendaDatabase();
 
   async function handleLogin() {
     try {
-      if (await redeAtiva()) {
+      const redeEServidor = await redeEServidorAtivo();
+      if (redeEServidor.ativo) {
         const agora = new Date();
 
         const horas = String(agora.getHours()).padStart(2, "0");
@@ -61,7 +62,7 @@ export default function Login() {
         const horario = `${horas}:${minutos}:${segundos}`;
 
         storage.set("ultAtuEstDep", agora.toLocaleDateString("pt-BR"));
-        storage.set("horaUltAtuEstDep", horario);        
+        storage.set("horaUltAtuEstDep", horario);
       }
 
       await efetuarLoginLocal(codigo, usuario, senha, isLembrarLogin);

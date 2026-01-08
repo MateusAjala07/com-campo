@@ -10,7 +10,6 @@ import Lista from "@/components/lista";
 import { asyncAlert } from "@/components/alerta";
 import { redeEServidorAtivo } from "@/utils/funcoes";
 import { createMMKV } from "react-native-mmkv";
-import Loading from "@/components/loading";
 
 const storage = createMMKV({
   id: "storage",
@@ -30,7 +29,6 @@ export default function RegistrosClimaticos() {
   const [acaoModalRegistrarClima, setAcaoModalRegistrarClima] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingSincronizar, setIsLoadingSincronizar] = useState(false);
   const [mensagemErro, setMensagemErro] = useState("");
 
   const {
@@ -57,8 +55,6 @@ export default function RegistrosClimaticos() {
       const conexao = await redeEServidorAtivo();
 
       if (conexao.ativo) {
-        setIsLoadingSincronizar(true);
-
         await uploadRegistrosClimaticos();
 
         await downloadRegistrosClimaticos();
@@ -67,8 +63,6 @@ export default function RegistrosClimaticos() {
       }
     } catch (error) {
       setMensagemErro("Falha na sincronização");
-    } finally {
-      setIsLoadingSincronizar(false);
     }
   }
 
@@ -110,19 +104,22 @@ export default function RegistrosClimaticos() {
     }
   }
 
-  useEffect(() => {
-    if (isModalRegistrarClimaOpen) return;
-
-    storage.set("numCompeso", 1);
-
+  async function handleFecharModal() {
+    setIsModalRegistrarClimaOpen(false);
     carregarDadosLocais().then(() => {
       sincronizarDados();
     });
-  }, [isModalRegistrarClimaOpen]);
+  }
+
+  useEffect(() => {
+    storage.set("numCompeso", 1);
+    carregarDadosLocais().then(() => {
+      sincronizarDados();
+    });
+  }, []);
 
   return (
     <>
-      <Loading ativo={isLoadingSincronizar} mensagem={"Sincronizando..."} />
       <ModalRegistrarClima
         isOpen={isModalRegistrarClimaOpen}
         setIsOpen={setIsModalRegistrarClimaOpen}
@@ -136,6 +133,7 @@ export default function RegistrosClimaticos() {
         setDataFormatada={setDataFormatada}
         guidRegistro={guid}
         acao={acaoModalRegistrarClima}
+        handleRequestClose={handleFecharModal}
       />
 
       <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8" }}>

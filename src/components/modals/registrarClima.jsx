@@ -2,11 +2,12 @@ import { Alert, Modal, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../button";
 import Input from "../input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { ehNumeroValido, gerarGuid } from "@/utils/funcoes";
 import useRegistrosClimaticosDatabase from "@/database/useRegistrosClimaticosDatabase";
 import { alerta } from "../alerta";
+import Select from "../select";
 
 export default function ModalRegistrarClima({
   isOpen,
@@ -21,11 +22,16 @@ export default function ModalRegistrarClima({
   setDataFormatada,
   guidRegistro,
   acao,
+  handleRequestClose = () => setIsOpen(false),
 }) {
   const [isCalendarioOpen, setIsCalenarioOpen] = useState(false);
+  const [dataPluviometro, setDataPluviometro] = useState([]);
 
-  const { registrarRegistrosClimaticosLocal, editarRegistrosClimaticosLocal } =
-    useRegistrosClimaticosDatabase();
+  const {
+    registrarRegistrosClimaticosLocal,
+    editarRegistrosClimaticosLocal,
+    consultarPluviometrosLocal,
+  } = useRegistrosClimaticosDatabase();
 
   function verificarCampos() {
     if (!pluviometro) {
@@ -54,7 +60,7 @@ export default function ModalRegistrarClima({
       } else if (acao === "editar") {
         editarRegistrosClimaticosLocal(guidRegistro, pluviometro, precipitacao, dataFormatada);
       }
-      setIsOpen(false);
+      handleRequestClose();
     } catch (error) {
       Alert.alert("ERRO", error.message);
     }
@@ -66,7 +72,7 @@ export default function ModalRegistrarClima({
       message: "Deseja cancelar o lançamento?",
       textYes: "SIM",
       textNo: "NÃO",
-      onYes: () => setIsOpen(false),
+      onYes: () => handleRequestClose(),
       cancelable: true,
     });
   }
@@ -84,14 +90,20 @@ export default function ModalRegistrarClima({
     );
   }
 
+  async function listarPluviometros() {
+    const response = await consultarPluviometrosLocal();
+    setDataPluviometro(response);
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      listarPluviometros();
+    }
+  }, [isOpen]);
+
   return (
     <>
-      <Modal
-        visible={isOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
-      >
+      <Modal visible={isOpen} transparent animationType="fade" onRequestClose={handleRequestClose}>
         <SafeAreaView
           style={{
             flex: 1,
@@ -101,20 +113,20 @@ export default function ModalRegistrarClima({
         >
           <View className="bg-white p-5 shadow rounded-xl gap-y-4 justify-center">
             <View className="gap-y-2">
-              <Input
+              <Select
                 label="Pluviômetro"
-                placeholder="Número do Pluviômetro"
+                data={dataPluviometro}
                 value={pluviometro}
-                onChangeText={setPluviometro}
-                keyboardType="numeric"
+                onChange={setPluviometro}
+                placeholder="Selecione o pluviômetro"
               />
+
               <Input
                 label="Data"
                 value={dataFormatada}
                 showSoftInputOnFocus={false}
                 onPressIn={() => setIsCalenarioOpen(true)}
               />
-
               {isCalendarioOpen && (
                 <DateTimePicker
                   testID="dateTimePicker"
@@ -124,7 +136,6 @@ export default function ModalRegistrarClima({
                   onChange={onSelecionarData}
                 />
               )}
-
               <Input
                 label="Precipitação (mm)"
                 value={precipitacao}

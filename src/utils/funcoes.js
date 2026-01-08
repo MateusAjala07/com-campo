@@ -7,30 +7,44 @@ import uuid from "react-native-uuid";
 
 export async function redeAtiva() {
   const state = await NetInfo.fetch();
+  const conectado = state.isConnected && state.isInternetReachable;
+
   return {
-    ativo: state.isConnected,
-    mensagem: state.isConnected ? "" : "Sem conexão com a internet!",
+    ativo: conectado,
+    mensagem: conectado ? "" : "Sem conexão com a internet!",
   };
 }
 
 export async function servidorAtivo() {
-  const status = await consultarServidor();
-  return {
-    ativo: status === 200,
-    mensagem: status === 200 ? "" : "Servidor inativo!",
-  };
+  try {
+    const status = await consultarServidor();
+    return {
+      ativo: status === 200,
+      mensagem: "",
+    };
+  } catch (error) {
+    return {
+      ativo: false,
+      mensagem: "Servidor indisponível no momento.",
+    };
+  }
 }
 
 export async function redeEServidorAtivo() {
-  let rede, servidor;
-  rede = await redeAtiva();
-  if (rede.ativo) {
-    servidor = await servidorAtivo();
+  const rede = await redeAtiva();
+
+  if (!rede.ativo) {
+    return {
+      ativo: false,
+      mensagem: rede.mensagem,
+    };
   }
 
+  const servidor = await servidorAtivo();
+
   return {
-    ativo: rede.ativo && servidor.ativo,
-    mensagem: !rede.ativo ? rede.mensagem : !servidor.ativo ? servidor.mensagem : "",
+    ativo: servidor.ativo,
+    mensagem: servidor.ativo ? "" : servidor.mensagem,
   };
 }
 

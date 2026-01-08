@@ -1,9 +1,14 @@
 import {
+  consultarPluviometrosServidor,
   consultarRegistrosClimaticosServidor,
   excluirRegistroClimaticoServidor,
   registrarRegistrosClimaticosServidor,
 } from "@/services/api";
-import { gerarTimestampAtual, listarInformacoesDispositivo } from "@/utils/funcoes";
+import {
+  gerarTimestampAtual,
+  listarInformacoesDispositivo,
+  redeEServidorAtivo,
+} from "@/utils/funcoes";
 import { useSQLiteContext } from "expo-sqlite";
 import { createMMKV } from "react-native-mmkv";
 
@@ -221,6 +226,60 @@ export default function useRegistrosClimaticosDatabase() {
     }
   }
 
+  async function consultarPluviometrosLocal() {
+    return await db.getAllAsync(
+      `
+        SELECT idpluv, numpluv, numref, despluv
+          FROM tbpluviometros
+        WHERE numcompeso = ?
+        ORDER BY numref
+      `,
+      [storage.getString("numCompeso")],
+    );
+  }
+
+  async function atualizarPluviometrosLocal() {
+    try {
+      const redeEServidor = await redeEServidorAtivo();
+      if (!redeEServidor.ativo) return;
+
+      const pluviometros = await consultarPluviometrosServidor();
+      await db.runAsync("BEGIN");
+
+      try {
+        await db.runAsync("DELETE FROM tbpluviometros");
+
+        if (pluviometros.length > 0) {
+          for (const pluviometro of pluviometros) {
+            await db.runAsync(
+              `
+              INSERT INTO tbpluviometros
+                (idpluv, numcompeso, numpluv, numref, despluv, sitpluv)
+              VALUES
+                (?, ?, ?, ?, ?, ?)  
+              `,
+              [
+                pluviometro.id,
+                pluviometro.numcompeso,
+                pluviometro.numpluv,
+                pluviometro.numref,
+                pluviometro.despluv,
+                pluviometro.sitpluv,
+              ],
+            );
+          }
+        }
+
+        await db.runAsync("COMMIT");
+      } catch (error) {
+        await db.runAsync("ROLLBACK");
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      throw new Error("Erro ao sincronizar pluviômetros:", error.message);
+    }
+  }
+
   return {
     consultarRegistrosClimaticosLocal,
     registrarRegistrosClimaticosLocal,
@@ -228,5 +287,7 @@ export default function useRegistrosClimaticosDatabase() {
     excluirRegistrosClimaticosLocal,
     uploadRegistrosClimaticos,
     downloadRegistrosClimaticos,
+    consultarPluviometrosLocal,
+    atualizarPluviometrosLocal,
   };
 }

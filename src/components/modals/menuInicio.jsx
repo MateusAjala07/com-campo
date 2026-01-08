@@ -30,14 +30,25 @@ export default function MenuInicio({ isOpen, setIsOpen }) {
               </Text>
             </View>
 
-            <Button variant="outline" texto="Sincronização" icon={<WifiSync color={"#99a1af"} />} />
+            <Button
+              variant="outline"
+              onPress={() => {
+                setIsOpen(false);
+                router.push("/sincronismo");
+              }}
+              texto="Sincronização"
+              icon={<WifiSync color={"#99a1af"} />}
+            />
 
             <View className="justify-end flex-1">
               <Button
                 variant="outline"
                 texto="Sair"
                 icon={<LogOut color={"#99a1af"} />}
-                onPress={() => router.replace("/")}
+                onPress={() => {
+                  setIsOpen(false);
+                  router.replace("/");
+                }}
               />
             </View>
           </Pressable>
