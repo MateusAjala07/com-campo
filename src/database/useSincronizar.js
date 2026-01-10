@@ -14,15 +14,7 @@ export default function useSincronizar() {
   async function sincronizarLogin() {
     try {
       const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) return;
-
-      if (
-        !storage.getString("ipConexao") ||
-        !storage.getString("portaConexao") ||
-        !storage.getString("descricaoConexao")
-      ) {
-        throw new Error("Nenhum conexão ativa!");
-      }
+      if (!redeEServidor.ativo) throw new Error(redeEServidor.mensagem);
 
       await atualizarUsuariosLocal();
       await atualizarFazendasLocal();
