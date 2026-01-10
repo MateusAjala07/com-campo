@@ -25,7 +25,7 @@ export default function MenuInicio({ isOpen, setIsOpen }) {
         <SafeAreaView style={{ flex: 1 }}>
           <Pressable className="bg-white shadow w-64 flex-1" onPress={() => {}}>
             <View className="bg-secondary p-7">
-              <Text className="text-white">
+              <Text className="text-white font-semibold">
                 {storage.getString("codUsu")} - {storage.getString("nomUsu")}
               </Text>
             </View>

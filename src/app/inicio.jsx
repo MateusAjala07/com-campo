@@ -26,17 +26,17 @@ export default function Inicio() {
         menu={() => setIsMenuOpen(!isMenuOpen)}
       />
       <View className="p-4 flex flex-row gap-2 flex-wrap">
-        <CardIcone
+        {/* <CardIcone
           icon={<MapPinned size={30} color={"#47a603"} />}
           texto="Ocorrências"
           navigate="/ocorrencias"
-        />
+        /> */}
         <CardIcone
           icon={<CloudSunRain size={30} color={"#47a603"} />}
           texto="Reg. Climáticos"
           navigate="/registros-climaticos"
         />
-        <CardIcone
+        {/* <CardIcone
           icon={<Fuel size={30} color={"#47a603"} />}
           texto="Abastecimentos"
           navigate="/abastecimentos"
@@ -50,7 +50,7 @@ export default function Inicio() {
           icon={<PackageOpen size={30} color={"#47a603"} />}
           texto="Consultar Estoque"
           navigate="/consultar-estoque"
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );

@@ -1,5 +1,5 @@
 import Cabecalho from "@/components/cabecalho";
-import { Plus, WifiSync } from "lucide-react-native";
+import { Clock, Plus, SlidersHorizontal } from "lucide-react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { View, TouchableOpacity, Text, Alert } from "react-native";
 import Button from "@/components/button";
@@ -10,6 +10,7 @@ import Lista from "@/components/lista";
 import { asyncAlert } from "@/components/alerta";
 import { redeEServidorAtivo } from "@/utils/funcoes";
 import { createMMKV } from "react-native-mmkv";
+import ModalFiltroSafras from "@/components/modals/Filtros/safra";
 
 const storage = createMMKV({
   id: "storage",
@@ -22,10 +23,14 @@ export default function RegistrosClimaticos() {
   const [precipitacao, setPrecipitacao] = useState("");
   const [data, setData] = useState(new Date());
   const [dataFormatada, setDataFormatada] = useState(data.toLocaleDateString("pt-BR"));
+
   const [guid, setGuid] = useState("");
 
   const [dataRegistrosClimaticos, setDataRegistrosClimaticos] = useState([]);
+
   const [isModalRegistrarClimaOpen, setIsModalRegistrarClimaOpen] = useState(false);
+  const [isModalFiltroSafrasOpen, setIsModalFiltroSafrasOpen] = useState(false);
+
   const [acaoModalRegistrarClima, setAcaoModalRegistrarClima] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +81,7 @@ export default function RegistrosClimaticos() {
 
   function handleEditar(item) {
     setAcaoModalRegistrarClima("editar");
-    setPluviometro(String(item?.idpluv));
+    setPluviometro(parseInt(item?.idpluv));
     setPrecipitacao(String(item?.precipitacao));
     setDataFormatada(item?.data);
     setGuid(item?.guid);
@@ -136,8 +141,19 @@ export default function RegistrosClimaticos() {
         handleRequestClose={handleFecharModal}
       />
 
+      <ModalFiltroSafras isOpen={isModalFiltroSafrasOpen} setIsOpen={setIsModalFiltroSafrasOpen} />
+
       <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8" }}>
         <Cabecalho atualizar={sincronizarDados} titulo="Registros do Clima" />
+
+        {/* <View className="flex flex-row mx-4 mt-4">
+          <Button
+            onPress={() => setIsModalFiltroSafrasOpen(true)}
+            texto="Safras"
+            size="sm"
+            icon={<SlidersHorizontal color={"#fff"} />}
+          />
+        </View> */}
 
         <Lista
           data={dataRegistrosClimaticos}
@@ -154,7 +170,7 @@ export default function RegistrosClimaticos() {
             >
               <View className="flex-row justify-between">
                 <Text className="text-gray-500 text-sm">ID: {item.id ? item.id : "..."}</Text>
-                {item.sincronizarapp === "N" && <WifiSync color={"#ffdf20"} size={20} />}
+                {item.sincronizarapp === "N" && <Clock color={"#ffdf20"} size={20} />}
               </View>
               <Text className="text-lg font-semibold">Data: {item.data}</Text>
               <Text>Pluviômetro: {item.idpluv}</Text>

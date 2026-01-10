@@ -91,7 +91,7 @@ export default function ModalRegistrarClima({
   }
 
   async function listarPluviometros() {
-    const response = await consultarPluviometrosLocal();
+    const response = await consultarPluviometrosLocal();      
     setDataPluviometro(response);
   }
 
@@ -119,6 +119,7 @@ export default function ModalRegistrarClima({
                 value={pluviometro}
                 onChange={setPluviometro}
                 placeholder="Selecione o pluviômetro"
+                config={{ label: "despluv", value: "idpluv" }}
               />
 
               <Input

@@ -14,7 +14,7 @@ export default function Select({
 }) {
   const [isFocus, setIsFocus] = useState(false);
 
-  const renderItem = (item) => {    
+  const renderItem = (item) => {
     const isSelected = item[config.value] === value;
 
     return (

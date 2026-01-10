@@ -234,7 +234,7 @@ export default function useRegistrosClimaticosDatabase() {
         WHERE numcompeso = ?
         ORDER BY numref
       `,
-      [storage.getString("numCompeso")],
+      [storage.getNumber("numCompeso")],
     );
   }
 
