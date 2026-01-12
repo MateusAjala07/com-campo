@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "@/components/input";
 import Button from "@/components/button";
-import { View, Text, Alert, TouchableOpacity } from "react-native";
+import { View, Text, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
 import Checkbox from "expo-checkbox";
 import { Image } from "react-native-css/components";
 import Logo from "@/assets/images/logo.png";
@@ -33,8 +33,9 @@ export default function Login() {
   const [senha, setSenha] = useState("");
 
   const [isLembrarLogin, setIsLembrarLogin] = useState(false);
-  const [isPrimeiroAcesso, setIsPrimeiroAcesso] = useState(false);
+  const [isPrimeiroAcesso, setIsPrimeiroAcesso] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
   const [mensagemLoading, setMensagemLoading] = useState("");
 
   const [isModalLicencaOpen, setIsModalLicencaOpen] = useState(false);
@@ -46,11 +47,11 @@ export default function Login() {
   const { verificarLicencaLocal } = useLicencaDatabase();
   const { sincronizarLogin } = useSincronizar();
   const { consultarUsuarioLocal } = useUsuarioDatabase();
-  const { consultarFazendasLocal, gravarPreferenciaFazendaLocal } =
-    useFazendaDatabase();
+  const { consultarFazendasLocal, gravarPreferenciaFazendaLocal } = useFazendaDatabase();
 
   async function handleLogin() {
     try {
+      setIsLoadingLogin(true);
       const redeEServidor = await redeEServidorAtivo();
       if (redeEServidor.ativo) {
         const agora = new Date();
@@ -80,6 +81,8 @@ export default function Login() {
       }
     } catch (error) {
       Alert.alert("Erro", error.message);
+    } finally {
+      setIsLoadingLogin(false);
     }
   }
 
@@ -132,7 +135,7 @@ export default function Login() {
       if (!verificarConexaoGravada()) return;
 
       const acesso = await verificarPrimeiroAcesso();
-
+      
       setIsPrimeiroAcesso(acesso.primeiroAcesso);
       if (acesso.primeiroAcesso) return;
 
@@ -233,7 +236,10 @@ export default function Login() {
       <Loading ativo={isLoading} mensagem={mensagemLoading} />
 
       <ModalLicenca isOpen={isModalLicencaOpen} setIsOpen={setIsModalLicencaOpen} />
-      <ModalConexao isOpen={isModalConexaoOpen} setIsOpen={setIsModalConexaoOpen} />
+      <ModalConexao
+        isOpen={isModalConexaoOpen}
+        setIsOpen={setIsModalConexaoOpen}
+      />
       <ModalUsuarios
         isOpen={isModalUsuariosOpen}
         setIsOpen={setIsModalUsuariosOpen}
@@ -260,10 +266,13 @@ export default function Login() {
                 onChangeText={setCodigo}
                 classNameContainer="flex-1"
                 label="Código"
+                editable={!isPrimeiroAcesso}
                 icon={<User color="#6a7282" size={20} />}
                 keyboardType="numeric"
               />
-              <View className="justify-center self-center mt-5 items-center bg-primary h-12 w-12 rounded-full">
+              <View
+                className={`bg-primary justify-center self-center mt-5 items-center h-12 w-12 rounded-full`}
+              >
                 <Search color="#fff" size={24} onPress={handleBuscarUsuarios} />
               </View>
               <Input
@@ -278,16 +287,23 @@ export default function Login() {
               value={senha}
               onChangeText={setSenha}
               label="Senha"
+              editable={!isPrimeiroAcesso}
               secureTextEntry
               icon={<Lock color="#6a7282" size={20} />}
             />
           </View>
           <View>
-            <Button texto="Entrar" onPress={handleLogin} />
+            <Button
+              icon={isLoadingLogin && <ActivityIndicator size="small" color="#fff" />}
+              texto={"Entrar"}
+              onPress={handleLogin}
+              disabled={isLoadingLogin}
+            />
           </View>
           <View className="flex-row gap-x-1 justify-center items-center">
             <Checkbox
               value={isLembrarLogin}
+              disabled={isPrimeiroAcesso}
               onValueChange={setIsLembrarLogin}
               color={isLembrarLogin ? "#47a603" : "#6a7282"}
             />
