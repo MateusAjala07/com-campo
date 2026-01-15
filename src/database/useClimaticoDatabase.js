@@ -16,7 +16,7 @@ const storage = createMMKV({
   id: "storage",
 });
 
-export default function useRegistrosClimaticosDatabase() {
+export default function useClimaticoDatabase() {
   const db = useSQLiteContext();
 
   async function consultarRegistrosClimaticosLocal() {
@@ -241,7 +241,7 @@ export default function useRegistrosClimaticosDatabase() {
   async function atualizarPluviometrosLocal() {
     try {
       const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) return;
+      if (!redeEServidor.ativo) throw redeEServidor.mensagem;
 
       const pluviometros = await consultarPluviometrosServidor();
       await db.runAsync("BEGIN");
@@ -273,10 +273,10 @@ export default function useRegistrosClimaticosDatabase() {
         await db.runAsync("COMMIT");
       } catch (error) {
         await db.runAsync("ROLLBACK");
-        throw new Error(error.message);
+        throw error;
       }
     } catch (error) {
-      throw new Error("Erro ao sincronizar pluviômetros:", error.message);
+      throw new Error("Erro ao sincronizar pluviômetros: " + error);
     }
   }
 

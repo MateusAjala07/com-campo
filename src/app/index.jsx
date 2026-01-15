@@ -12,7 +12,6 @@ import useLoginDatabase from "@/database/useLoginDatabase";
 import { Lock, RefreshCcw, Search, User } from "lucide-react-native";
 import ModalUsuarios from "@/components/modals/usuarios";
 import useLicencaDatabase from "@/database/useLicencaDatabase";
-import useSincronizar from "@/database/useSincronizar";
 import { createMMKV } from "react-native-mmkv";
 import { StatusBar } from "expo-status-bar";
 import useUsuarioDatabase from "@/database/useUsuarioDatabase";
@@ -45,9 +44,9 @@ export default function Login() {
 
   const { efetuarLoginLocal, verificarSistemaLocal } = useLoginDatabase();
   const { verificarLicencaLocal } = useLicencaDatabase();
-  const { sincronizarLogin } = useSincronizar();
-  const { consultarUsuarioLocal } = useUsuarioDatabase();
-  const { consultarFazendasLocal, gravarPreferenciaFazendaLocal } = useFazendaDatabase();
+  const { consultarUsuarioLocal, atualizarUsuariosLocal } = useUsuarioDatabase();
+  const { consultarFazendasLocal, gravarPreferenciaFazendaLocal, atualizarFazendasLocal } =
+    useFazendaDatabase();
 
   async function handleLogin() {
     try {
@@ -135,7 +134,7 @@ export default function Login() {
       if (!verificarConexaoGravada()) return;
 
       const acesso = await verificarPrimeiroAcesso();
-      
+
       setIsPrimeiroAcesso(acesso.primeiroAcesso);
       if (acesso.primeiroAcesso) return;
 
@@ -179,6 +178,20 @@ export default function Login() {
     }
 
     setUsuario(response.nomusu);
+  }
+
+  async function sincronizarLogin() {
+    try {
+      const redeEServidor = await redeEServidorAtivo();
+      if (!redeEServidor.ativo) throw redeEServidor.mensagem;
+
+      await atualizarUsuariosLocal();
+      await atualizarFazendasLocal();
+
+      return { sucesso: true, mensagem: "Sincronização efetuada com sucesso!" };
+    } catch (error) {
+      throw new Error("Erro ao sincronizar: " + error);
+    }
   }
 
   async function handleSincronizar() {
@@ -236,10 +249,7 @@ export default function Login() {
       <Loading ativo={isLoading} mensagem={mensagemLoading} />
 
       <ModalLicenca isOpen={isModalLicencaOpen} setIsOpen={setIsModalLicencaOpen} />
-      <ModalConexao
-        isOpen={isModalConexaoOpen}
-        setIsOpen={setIsModalConexaoOpen}
-      />
+      <ModalConexao isOpen={isModalConexaoOpen} setIsOpen={setIsModalConexaoOpen} />
       <ModalUsuarios
         isOpen={isModalUsuariosOpen}
         setIsOpen={setIsModalUsuariosOpen}

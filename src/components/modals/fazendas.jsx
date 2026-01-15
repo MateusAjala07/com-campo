@@ -30,11 +30,13 @@ export default function ModalFazendas({ isOpen, setIsOpen, handleFazenda = () =>
   }
 
   useEffect(() => {
-    storage.set("numCompeso", 0);
-    storage.set("nomFazenda", "");
-    storage.set("codCiclo", 0);
-    listarFazendas();
-  }, []);
+    if (isOpen) {
+      storage.set("numCompeso", 0);
+      storage.set("nomFazenda", "");
+      storage.set("codCiclo", 0);
+      listarFazendas();
+    }
+  }, [isOpen]);
 
   return (
     <>

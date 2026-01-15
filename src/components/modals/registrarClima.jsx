@@ -5,7 +5,7 @@ import Input from "../input";
 import { useEffect, useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { ehNumeroValido, gerarGuid } from "@/utils/funcoes";
-import useRegistrosClimaticosDatabase from "@/database/useRegistrosClimaticosDatabase";
+import useClimaticoDatabase from "@/database/useClimaticoDatabase";
 import { alerta } from "../alerta";
 import Select from "../select";
 
@@ -31,7 +31,7 @@ export default function ModalRegistrarClima({
     registrarRegistrosClimaticosLocal,
     editarRegistrosClimaticosLocal,
     consultarPluviometrosLocal,
-  } = useRegistrosClimaticosDatabase();
+  } = useClimaticoDatabase();
 
   function verificarCampos() {
     if (!pluviometro) {
@@ -91,7 +91,7 @@ export default function ModalRegistrarClima({
   }
 
   async function listarPluviometros() {
-    const response = await consultarPluviometrosLocal();      
+    const response = await consultarPluviometrosLocal();
     setDataPluviometro(response);
   }
 

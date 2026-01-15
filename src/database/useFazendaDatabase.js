@@ -18,7 +18,7 @@ export default function useFazendaDatabase() {
   async function atualizarFazendasLocal() {
     try {
       const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) return;
+      if (!redeEServidor.ativo) throw redeEServidor.mensagem;
 
       const fazendas = await consultarFazendasServidor();
       await db.runAsync("BEGIN");
@@ -45,7 +45,7 @@ export default function useFazendaDatabase() {
         throw error;
       }
     } catch (error) {
-      throw new Error("Erro ao sincronizar fazendas:", error);
+      throw new Error("Erro ao sincronizar fazendas: " + error);
     }
   }
 

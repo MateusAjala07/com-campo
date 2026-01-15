@@ -7,8 +7,16 @@ import { RefreshCcw } from "lucide-react-native";
 import Button from "@/components/button";
 import useSafrasDatabase from "@/database/useSafrasDatabase";
 import useFazendaDatabase from "@/database/useFazendaDatabase";
-import useRegistrosClimaticosDatabase from "@/database/useRegistrosClimaticosDatabase";
-import { redeEServidorAtivo } from "@/utils/funcoes";
+import useClimaticoDatabase from "@/database/useClimaticoDatabase";
+import useCentroDeCustoDatabase from "@/database/useCentroDeCustoDatabase";
+import useCicloDeProducaoDatabase from "@/database/useCicloDeProducaoDatabase";
+import useLoteDatabase from "@/database/useLoteDatabase";
+import useTipoOcorrenciaDatabase from "@/database/useTipoOcorrenciaDatabase";
+import useFuncionarioDatabase from "@/database/useFuncionarioDatabase";
+import useMercadoriaDatabase from "@/database/useMercadoriaDatabase";
+import useDepositoDatabase from "@/database/useDepositoDatabase";
+import useOcorrenciaDatabase from "@/database/useOcorrenciaDatabase";
+import useLancamentoBaixaDatabase from "@/database/useLancamentoBaixaDatabase";
 
 export default function Sincronismo() {
   const [items, setItems] = useState([
@@ -18,14 +26,28 @@ export default function Sincronismo() {
     { nome: "Lotes", isLoading: false },
     { nome: "Safras", isLoading: false },
     { nome: "Mercadorias", isLoading: false },
-    { nome: "Depositos", isLoading: false },
+    { nome: "Depósitos", isLoading: false },
     { nome: "Tipo Ocorrência", isLoading: false },
     { nome: "Pluviômetros", isLoading: false },
+    { nome: "Funcionários", isLoading: false },
+    { nome: "Lançamento Ocorrências", isLoading: false },
+    { nome: "Lançamento Baixas", isLoading: false },
+    { nome: "Lançamento Climático", isLoading: false },
   ]);
 
-  const { atualizarSafrasLocal } = useSafrasDatabase();
   const { atualizarFazendasLocal } = useFazendaDatabase();
-  const { atualizarPluviometrosLocal } = useRegistrosClimaticosDatabase();
+  const { atualizarCentroDeCustosLocal } = useCentroDeCustoDatabase();
+  const { atualizarSafrasLocal } = useSafrasDatabase();
+  const { atualizarPluviometrosLocal, uploadRegistrosClimaticos, downloadRegistrosClimaticos } =
+    useClimaticoDatabase();
+  const { atualizarCicloDeProducaoLocal } = useCicloDeProducaoDatabase();
+  const { atualizarLotesLocal } = useLoteDatabase();
+  const { atualizarTipoOcorrenciasLocal } = useTipoOcorrenciaDatabase();
+  const { atualizarFuncionariosLocal } = useFuncionarioDatabase();
+  const { atualizarMercadoriasLocal } = useMercadoriaDatabase();
+  const { atualizarDepositosLocal } = useDepositoDatabase();
+  const { atualizarOcorrenciasLocal } = useOcorrenciaDatabase();
+  const { atualizarLancamentosBaixasLocal } = useLancamentoBaixaDatabase();
 
   const setLoading = (nomeItem, status) => {
     setItems((prevItems) =>
@@ -35,31 +57,66 @@ export default function Sincronismo() {
 
   async function handleSincronizar(nomeItem) {
     try {
-      const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) {
-        throw new Error(redeEServidor.mensagem);
-      }
-
       switch (nomeItem) {
         case "Fazendas":
           await sincronizarFazendas();
           break;
+        case "Centro de Custos":
+          await sincronizarCentroDeCustos();
+          break;
+        case "Ciclo de Produção":
+          await sincronizarCicloDeProducao();
+          break;
+        case "Lotes":
+          await sincronizarLotes();
+          break;
         case "Safras":
           await sincronizarSafras();
+          break;
+        case "Mercadorias":
+          await sincronizarMercadorias();
+          break;
+        case "Depósitos":
+          await sincronizarDepositos();
+          break;
+        case "Tipo Ocorrência":
+          await sincronizarTipoOcorrencia();
           break;
         case "Pluviômetros":
           await sincronizarPluviometros();
           break;
+        case "Funcionários":
+          await sincronizarFuncionarios();
+          break;
+        case "Lançamento Ocorrências":
+          await sincronizarOcorrencias();
+          break;
+        case "Lançamento Baixas":
+          await sincronizarLancamentosBaixas();
+          break;
+        case "Lançamento Climático":
+          await sincronizarClimaticos();
+          break;
         case "Todos":
           await sincronizarFazendas();
+          await sincronizarCentroDeCustos();
+          await sincronizarCicloDeProducao();
+          await sincronizarLotes();
           await sincronizarSafras();
+          await sincronizarMercadorias();
+          await sincronizarDepositos();
+          await sincronizarTipoOcorrencia();
           await sincronizarPluviometros();
+          await sincronizarFuncionarios();
+          await sincronizarOcorrencias();
+          await sincronizarLancamentosBaixas();
+          await sincronizarClimaticos();
           break;
         default:
           break;
       }
     } catch (error) {
-      Alert.alert("ERRO", error.message)
+      Alert.alert("ERRO", error.message);
     }
   }
 
@@ -68,9 +125,42 @@ export default function Sincronismo() {
       setLoading("Fazendas", true);
       await atualizarFazendasLocal();
     } catch (error) {
-      Alert.alert("ERRO", error.message);
+      throw new Error(error.message);
     } finally {
       setLoading("Fazendas", false);
+    }
+  }
+
+  async function sincronizarCentroDeCustos() {
+    try {
+      setLoading("Centro de Custos", true);
+      await atualizarCentroDeCustosLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Centro de Custos", false);
+    }
+  }
+
+  async function sincronizarCicloDeProducao() {
+    try {
+      setLoading("Ciclo de Produção", true);
+      await atualizarCicloDeProducaoLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Ciclo de Produção", false);
+    }
+  }
+
+  async function sincronizarLotes() {
+    try {
+      setLoading("Lotes", true);
+      await atualizarLotesLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Lotes", false);
     }
   }
 
@@ -79,9 +169,42 @@ export default function Sincronismo() {
       setLoading("Safras", true);
       await atualizarSafrasLocal();
     } catch (error) {
-      Alert.alert("ERRO", error.message);
+      throw new Error(error.message);
     } finally {
       setLoading("Safras", false);
+    }
+  }
+
+  async function sincronizarMercadorias() {
+    try {
+      setLoading("Mercadorias", true);
+      await atualizarMercadoriasLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Mercadorias", false);
+    }
+  }
+
+  async function sincronizarDepositos() {
+    try {
+      setLoading("Depósitos", true);
+      await atualizarDepositosLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Depósitos", false);
+    }
+  }
+
+  async function sincronizarTipoOcorrencia() {
+    try {
+      setLoading("Tipo Ocorrência", true);
+      await atualizarTipoOcorrenciasLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Tipo Ocorrência", false);
     }
   }
 
@@ -90,9 +213,54 @@ export default function Sincronismo() {
       setLoading("Pluviômetros", true);
       await atualizarPluviometrosLocal();
     } catch (error) {
-      Alert.alert("ERRO", error.message);
+      throw new Error(error.message);
     } finally {
       setLoading("Pluviômetros", false);
+    }
+  }
+
+  async function sincronizarFuncionarios() {
+    try {
+      setLoading("Funcionários", true);
+      await atualizarFuncionariosLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Funcionários", false);
+    }
+  }
+
+  async function sincronizarOcorrencias() {
+    try {
+      setLoading("Lançamento Ocorrências", true);
+      await atualizarOcorrenciasLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Lançamento Ocorrências", false);
+    }
+  }
+
+  async function sincronizarLancamentosBaixas() {
+    try {
+      setLoading("Lançamento Baixas", true);
+      await atualizarLancamentosBaixasLocal();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Lançamento Baixas", false);
+    }
+  }
+
+  async function sincronizarClimaticos() {
+    try {
+      setLoading("Lançamento Climático", true);
+      await uploadRegistrosClimaticos();
+      await downloadRegistrosClimaticos();
+    } catch (error) {
+      throw new Error(error.message);
+    } finally {
+      setLoading("Lançamento Climático", false);
     }
   }
 

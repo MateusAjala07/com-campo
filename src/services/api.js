@@ -107,3 +107,68 @@ export async function consultarPluviometrosServidor() {
   const response = await api.get(`comcampo/pluviometros`);
   return response.data;
 }
+
+export async function consultarCentroDeCustosServidor() {
+  const response = await api.get("comcampo/centro-custos");
+  return response.data;
+}
+
+export async function consultarCicloDeProducaoServidor() {
+  const response = await api.get("comcampo/ciclo-producao");
+  return response.data;
+}
+
+export async function consultarLotesServidor() {
+  const response = await api.get("comcampo/lotes");
+  return response.data;
+}
+
+export async function consultarLotesCicloServidor() {
+  const response = await api.get("comcampo/lotes-ciclo");
+  return response.data;
+}
+
+export async function consultarMercadoriasServidor() {
+  const response = await api.get("comcampo/mercadorias");
+  return response.data;
+}
+
+export async function consultarDepositosServidor() {
+  const response = await api.get("comcampo/depositos");
+  return response.data;
+}
+
+export async function consultarTipoOcorrenciasServidor() {
+  const response = await api.get("comcampo/tipo-ocorrencia");
+  return response.data;
+}
+
+export async function consultarOcorrenciasServidor(pCodCiclo = 0) {
+  const response = await api.get(`comcampo/ocorrencias?codciclo=${pCodCiclo}`);
+  return response.data;
+}
+
+export async function consultarFuncionariosServidor() {
+  const response = await api.get("comcampo/funcionarios");
+  return response.data;
+}
+
+export async function consultarEstoquesServidor(pDeposito = 0) {
+  const response = await api.get(`comcampo/estoques?deposito=${pDeposito}`);
+  return response.data;
+}
+
+export async function consultarLancamentosBaixasServidor() {
+  const response = await api.get("comcampo/lancamentos/baixas");
+  return response.data;
+}
+
+export async function consultarLancamentosItensServidor(pIdLan = 0) {
+  const response = await api.get(`comcampo/lancamentos/itens?idlan=${pIdLan}`);
+  return response.data;
+}
+
+export async function consultarLancamentosTalhoesServidor(pIdLan = 0) {
+  const response = await api.get(`comcampo/lancamentos/talhoes?idlan=${pIdLan}`);
+  return response.data;
+}

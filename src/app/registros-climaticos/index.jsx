@@ -5,7 +5,7 @@ import { View, TouchableOpacity, Text, Alert } from "react-native";
 import Button from "@/components/button";
 import ModalRegistrarClima from "@/components/modals/registrarClima";
 import { useEffect, useState } from "react";
-import useRegistrosClimaticosDatabase from "@/database/useRegistrosClimaticosDatabase";
+import useClimaticoDatabase from "@/database/useClimaticoDatabase";
 import Lista from "@/components/lista";
 import { asyncAlert } from "@/components/alerta";
 import { redeEServidorAtivo } from "@/utils/funcoes";
@@ -41,7 +41,7 @@ export default function RegistrosClimaticos() {
     excluirRegistrosClimaticosLocal,
     uploadRegistrosClimaticos,
     downloadRegistrosClimaticos,
-  } = useRegistrosClimaticosDatabase();
+  } = useClimaticoDatabase();
 
   async function carregarDadosLocais() {
     try {
@@ -102,7 +102,7 @@ export default function RegistrosClimaticos() {
 
         await carregarDadosLocais();
 
-        sincronizarDados();
+        await sincronizarDados();
       }
     } catch (error) {
       Alert.alert("ERRO", error.message);

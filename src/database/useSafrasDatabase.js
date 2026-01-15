@@ -29,7 +29,7 @@ export default function useSafrasDatabase() {
   async function atualizarSafrasLocal() {
     try {
       const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) return;
+      if (!redeEServidor.ativo) throw redeEServidor.mensagem;
 
       const safras = await consultarSafrasServidor();
       await db.runAsync("BEGIN");
@@ -67,10 +67,10 @@ export default function useSafrasDatabase() {
         await db.runAsync("COMMIT");
       } catch (error) {
         await db.runAsync("ROLLBACK");
-        throw new Error(error.message);
+        throw error;
       }
     } catch (error) {
-      throw new Error("Erro ao sincronizar safras:", error.message);
+      throw new Error("Erro ao sincronizar safras: " + error);
     }
   }
 

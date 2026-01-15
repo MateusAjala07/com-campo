@@ -19,7 +19,11 @@ export default function useUsuarioDatabase() {
   async function consultarUsuariosLocal() {
     try {
       return await db.getAllAsync(
-        `SELECT codusu,nomusu,senusu,ususuper,id,acessomobile FROM tbusuarios`,
+        `
+          SELECT 
+            codusu,nomusu,senusu,ususuper,id,acessomobile 
+          FROM tbusuarios
+        `,
       );
     } catch (error) {
       throw new Error(error.message);
@@ -29,14 +33,13 @@ export default function useUsuarioDatabase() {
   async function atualizarUsuariosLocal() {
     try {
       const redeEServidor = await redeEServidorAtivo();
-      if (!redeEServidor.ativo) return;
+      if (!redeEServidor.ativo) throw redeEServidor.mensagem;
 
       const usuarios = await consultarUsuariosServidor();
       await db.runAsync("BEGIN");
 
       try {
-        await db.runAsync(`DELETE FROM tbusuarios`);
-
+        await db.runAsync(`DELETE FROM tbusuarios`);  
         if (usuarios.length > 0) {
           for (const usuario of usuarios) {
             await db.runAsync(
@@ -59,10 +62,10 @@ export default function useUsuarioDatabase() {
         await db.runAsync("COMMIT");
       } catch (error) {
         await db.runAsync("ROLLBACK");
-        throw new Error(error.message);
+        throw error;
       }
     } catch (error) {
-      throw new Error("Erro ao sincronizar usuarios", error.message);
+      throw new Error("Erro ao sincronizar usuários: ", error);
     }
   }
 

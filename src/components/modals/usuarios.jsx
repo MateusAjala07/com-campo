@@ -14,7 +14,8 @@ export default function ModalUsuarios({ isOpen, setIsOpen, handleUsuario = () =>
   async function listarUsuarios() {
     try {
       setIsLoading(true);
-      const response = await consultarUsuariosLocal();
+      const response = await consultarUsuariosLocal();    
+      
       setData(response);
     } catch (error) {
       setMensagemErro(error.message);
