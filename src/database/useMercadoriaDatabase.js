@@ -71,5 +71,28 @@ export default function useMercadoriaDatabase() {
     }
   }
 
-  return { atualizarMercadoriasLocal };
+  async function consultarMaquinasLocal(coluna = "*") {
+    return await db.getAllAsync(
+      `
+        SELECT ${coluna}
+          FROM tbmercadorias
+        WHERE codclasselan = 2
+        ORDER BY nompro, placa
+      `,
+    );
+  }
+
+  async function consultarProdutosLocal(coluna = "*", tipoItem) {
+    return await db.getAllAsync(
+      `
+        SELECT ${coluna}
+          FROM tbmercadorias
+        WHERE codclasselan = 1
+          AND tipitem = ?
+      `,
+      [tipoItem],
+    );
+  }
+
+  return { atualizarMercadoriasLocal, consultarMaquinasLocal, consultarProdutosLocal };
 }

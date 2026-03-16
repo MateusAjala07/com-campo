@@ -46,5 +46,15 @@ export default function useFuncionarioDatabase() {
     }
   }
 
-  return { atualizarFuncionariosLocal };
+  async function consultarFuncionariosLocal(coluna = "*"){
+    return await db.getAllAsync(
+      `
+        SELECT ${coluna}
+          FROM tbfuncionarios
+        ORDER BY nomfun
+      `
+    )
+  }
+
+  return { atualizarFuncionariosLocal, consultarFuncionariosLocal };
 }

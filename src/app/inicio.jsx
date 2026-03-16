@@ -36,15 +36,15 @@ export default function Inicio() {
           texto="Reg. Climáticos"
           navigate="/registros-climaticos"
         />
+        <CardIcone
+          icon={<Package size={30} color={"#47a603"} />}
+          texto="Reg. Baixa de Estoque"
+          navigate="/registros-baixa-de-estoque"
+        />
         {/* <CardIcone
           icon={<Fuel size={30} color={"#47a603"} />}
           texto="Abastecimentos"
           navigate="/abastecimentos"
-        />
-        <CardIcone
-          icon={<Package size={30} color={"#47a603"} />}
-          texto="Baixa de Estoque"
-          navigate="/baixa-de-estoque"
         />
         <CardIcone
           icon={<PackageOpen size={30} color={"#47a603"} />}

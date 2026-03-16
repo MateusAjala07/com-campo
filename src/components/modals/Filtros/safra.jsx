@@ -49,6 +49,7 @@ export default function ModalFiltroSafras({ isOpen, setIsOpen }) {
                 onChange={setSafra}
                 placeholder="Selecione a safra"
                 config={{ label: "descricao", value: "id" }}
+                search
               />
               <Button texto="Filtrar" icon={<Filter color={"#fff"} size={20} />} />
             </View>

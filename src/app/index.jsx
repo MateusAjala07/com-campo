@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import Input from "@/components/input";
 import Button from "@/components/button";
 import { View, Text, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
@@ -242,6 +242,7 @@ export default function Login() {
     inicializarLogin();
   }, []);
 
+  const insets = useSafeAreaInsets()
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8", paddingHorizontal: 16 }}>
       <StatusBar style="dark" />
@@ -322,9 +323,22 @@ export default function Login() {
         </View>
       </View>
 
-      <View className="items-center mt-6 mb-2 gap-2">
+      <View
+        style={{
+          flexDirection: "column",
+          position: "absolute",
+          alignSelf: "center",
+          gap: 8,
+          bottom: insets.bottom,
+        }}
+      >
+        <Button
+          classNameButton="w-13 self-center"
+          size="icon"
+          icon={<RefreshCcw color={"#fff"} />}
+          onPress={handleSincronizar}
+        />
         <Text className="text-gray-500">Versão {Constants.expoConfig.version}</Text>
-        <Button size="icon" icon={<RefreshCcw color={"#fff"} />} onPress={handleSincronizar} />
       </View>
     </SafeAreaView>
   );

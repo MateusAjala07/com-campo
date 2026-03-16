@@ -36,7 +36,7 @@ const Input = forwardRef(function Input(
 
       <View
         className={cn(
-          "flex-row items-center rounded-lg px-3 h-14 gap-2 border",
+          "flex-row items-center rounded-lg px-2 h-14 gap-2 border",
           editable ? "bg-white dark:bg-neutral-900" : "bg-neutral-100 dark:bg-neutral-800",
           focused ? "border-primary" : "border-gray-300",
           error && "border-red-500",
@@ -61,7 +61,7 @@ const Input = forwardRef(function Input(
             !editable && "opacity-60",
             classNameInput,
           )}
-          selectionColor="#1a7dd7"
+          selectionColor="#47a603"          
           {...rest}
         />
       </View>

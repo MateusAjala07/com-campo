@@ -151,5 +151,16 @@ export default function useLancamentoBaixaDatabase() {
     }
   }
 
-  return { atualizarLancamentosBaixasLocal };
+  async function retornarProximoIDLancamento() {
+    const response = await db.runAsync(
+      `
+        SELECT max(id) as id
+        FROM tblancamentos
+      `,
+    );
+
+    return response.id ? response.id++ : 1;
+  }
+
+  return { atualizarLancamentosBaixasLocal, retornarProximoIDLancamento };
 }

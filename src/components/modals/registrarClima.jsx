@@ -120,6 +120,7 @@ export default function ModalRegistrarClima({
                 onChange={setPluviometro}
                 placeholder="Selecione o pluviômetro"
                 config={{ label: "despluv", value: "idpluv" }}
+                search
               />
 
               <Input

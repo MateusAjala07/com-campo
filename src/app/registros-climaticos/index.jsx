@@ -169,13 +169,14 @@ export default function RegistrosClimaticos() {
               activeOpacity={0.8}
             >
               <View className="flex-row justify-between">
-                <Text className="text-gray-500 text-sm">ID: {item.id ? item.id : "..."}</Text>
-                {item.sincronizarapp === "N" && <Clock color={"#ffdf20"} size={20} />}
+                <Text className="text-gray-500 text-sm">{item.id ? item.id : "..."} - {item.nomusuinc}</Text>
+                <View className="flex-row gap-2">
+                  <Text className="text-gray-500">{item.data}</Text>
+                  {item.sincronizarapp === "N" && <Clock color={"#ffdf20"} size={20} />}
+                </View>
               </View>
-              <Text className="text-lg font-semibold">Data: {item.data}</Text>
               <Text>Pluviômetro: {item.idpluv}</Text>
               <Text>Precipitação: {item.precipitacao} (mm)</Text>
-              <Text>Responsável: {item.nomusuinc}</Text>
             </TouchableOpacity>
           )}
         />

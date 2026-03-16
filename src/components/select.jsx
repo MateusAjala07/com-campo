@@ -11,6 +11,7 @@ export default function Select({
   searchPlaceholder = "Buscar...",
   config = { label: "descricao", value: "id" },
   error,
+  search = false,
 }) {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -28,7 +29,9 @@ export default function Select({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Text className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</Text>
+      )}
 
       <Dropdown
         style={[styles.dropdown, isFocus && styles.dropdownFocus, error && styles.dropdownError]}
@@ -38,7 +41,7 @@ export default function Select({
         iconStyle={styles.iconStyle}
         containerStyle={styles.dropdownContainer}
         data={data}
-        search
+        search={search}
         maxHeight={300}
         labelField={config.label}
         valueField={config.value}
@@ -60,9 +63,6 @@ export default function Select({
 }
 
 const styles = StyleSheet.create({
-  label: {
-    marginBottom: 6,
-  },
   dropdown: {
     height: 50,
     borderColor: "#d1d5dc",
