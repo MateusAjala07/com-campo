@@ -147,7 +147,7 @@ export default function ModalRegistrarClima({
             </View>
             <View className="gap-y-2">
               <Button texto="Salvar" onPress={handleSalvar} />
-              <Button texto="Cancelar" variant="outline" onPress={handleCancelar} />
+              <Button texto="Cancelar" variant="cancel" onPress={handleCancelar} />
             </View>
           </View>
         </SafeAreaView>
