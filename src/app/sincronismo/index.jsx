@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Cabecalho from "@/components/cabecalho";
 import Lista from "@/components/lista";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,8 +17,10 @@ import useMercadoriaDatabase from "@/database/useMercadoriaDatabase";
 import useDepositoDatabase from "@/database/useDepositoDatabase";
 import useOcorrenciaDatabase from "@/database/useOcorrenciaDatabase";
 import useLancamentoBaixaDatabase from "@/database/useLancamentoBaixaDatabase";
+import { useNavigation } from "expo-router";
 
 export default function Sincronismo() {
+  const navigation = useNavigation();
   const [items, setItems] = useState([
     { nome: "Fazendas", isLoading: false },
     { nome: "Centro de Custos", isLoading: false },
@@ -34,6 +36,25 @@ export default function Sincronismo() {
     { nome: "Lançamento Baixas", isLoading: false },
     { nome: "Lançamento Climático", isLoading: false },
   ]);
+  useEffect(() => {
+    const valor = items.some((n) => n.isLoading === true);
+    const sairTela = navigation.addListener("beforeRemove", (e) => {
+      if (!valor) {
+        return;
+      }
+      e.preventDefault();
+      Alert.alert("Você não pode sair!", "Sincronização em andamento", [
+        { text: "Ok", style: "cancel", onPress: () => {} },
+        //  {
+        //     text: 'Sair',
+        //     style: 'destructive',
+        //     // Se o usuário confirmar, navega manualmente
+        //     onPress: () => navigation.dispatch(e.data.action),
+        //   },
+      ]);
+    });
+    return sairTela;
+  }, [navigation, items]);
 
   const { atualizarFazendasLocal } = useFazendaDatabase();
   const { atualizarCentroDeCustosLocal } = useCentroDeCustoDatabase();
@@ -60,42 +81,55 @@ export default function Sincronismo() {
       switch (nomeItem) {
         case "Fazendas":
           await sincronizarFazendas();
+          Alert.alert("Sincronizado com Sucesso", "Fazenda sincronizada com sucesso!");
           break;
         case "Centro de Custos":
           await sincronizarCentroDeCustos();
+          Alert.alert("Sincronizado com Sucesso", "Centro de Custos sincronizado com sucesso!");
           break;
         case "Ciclo de Produção":
           await sincronizarCicloDeProducao();
+          Alert.alert("Sincronizado com Sucesso","Ciclo de Produção sincronizado com sucesso!");
           break;
         case "Lotes":
           await sincronizarLotes();
+          Alert.alert("Sincronizado com Sucesso","Lotes sincronizado com sucesso!");
           break;
         case "Safras":
           await sincronizarSafras();
+          Alert.alert("Sincronizado com Sucesso","Safras sincronizada com sucesso!");
           break;
         case "Mercadorias":
           await sincronizarMercadorias();
+          Alert.alert("Sincronizado com Sucesso","Mercadorias sincronizada com sucesso!");
           break;
         case "Depósitos":
           await sincronizarDepositos();
+          Alert.alert("Sincronizado com Sucesso","Depósitos sincronizados com sucesso!");
           break;
         case "Tipo Ocorrência":
           await sincronizarTipoOcorrencia();
+          Alert.alert("Sincronizado com Sucesso","Tipo Ocorrência sincronizado com sucesso!");
           break;
         case "Pluviômetros":
           await sincronizarPluviometros();
+          Alert.alert("Sincronizado com Sucesso","Pluviômetros sincronizados com sucesso!");
           break;
         case "Funcionários":
           await sincronizarFuncionarios();
+          Alert.alert("Sincronizado com Sucesso","Funcionários sincronizados com sucesso!");
           break;
         case "Lançamento Ocorrências":
           await sincronizarOcorrencias();
+          Alert.alert("Sincronizado com Sucesso","Lançamentos sincronizado com sucesso!");
           break;
         case "Lançamento Baixas":
           await sincronizarLancamentosBaixas();
+          Alert.alert("Sincronizado com Sucesso","Lançamentos Baixas sincronizado com sucesso!");
           break;
         case "Lançamento Climático":
           await sincronizarClimaticos();
+          Alert.alert("Sincronizado com Sucesso","Lançametnos Cliamáticos sincronizado com sucesso!");
           break;
         case "Todos":
           await sincronizarFazendas();
@@ -111,6 +145,7 @@ export default function Sincronismo() {
           await sincronizarOcorrencias();
           await sincronizarLancamentosBaixas();
           await sincronizarClimaticos();
+          Alert.alert("Sincronizados com Sucesso","Todos sincronizado com sucesso!");
           break;
         default:
           break;

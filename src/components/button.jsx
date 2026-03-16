@@ -13,7 +13,8 @@ export default function Button({
   const variants = {
     default: "bg-primary",
     destructive: "bg-red-600",
-    outline: "border border-gray-100 bg-transparent",
+    outline: "border border-gray-100 bg-transparent ",
+    cancel:"border border-gray-300 bg-white",
     secondary: "bg-background",
     ghost: "bg-transparent",
     link: "bg-transparent",
