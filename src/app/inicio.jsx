@@ -3,10 +3,13 @@ import Cabecalho from "@/components/cabecalho";
 import CardIcone from "@/components/cardIcone";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CloudSunRain, Fuel, MapPinned, Package, PackageOpen } from "lucide-react-native";
 import MenuInicio from "@/components/modals/menuInicio";
 import { createMMKV } from "react-native-mmkv";
+import { Alert } from "react-native";
+import { BackHandler } from "react-native";
+import { usePathname } from "expo-router";
 
 const storage = createMMKV({
   id: "storage",
@@ -14,6 +17,23 @@ const storage = createMMKV({
 
 export default function Inicio() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+  useEffect(() => {
+    const backAction = () => {
+      if (pathname === "/inicio") {
+        Alert.alert("Sair", "Tem certeza que deseja sair do app?", [
+          { text: "Cancelar", onPress: () => null, style: "cancel" },
+          { text: "Sim", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () => backHandler.remove();
+  }, [pathname]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8" }}>
@@ -46,12 +66,12 @@ export default function Inicio() {
           texto="Abastecimentos"
           navigate="/abastecimentos"
         />
-        {/* 
+        
         <CardIcone
           icon={<PackageOpen size={30} color={"#47a603"} />}
           texto="Consultar Estoque"
           navigate="/consultar-estoque"
-        /> */}
+        />
       </View>
     </SafeAreaView>
   );

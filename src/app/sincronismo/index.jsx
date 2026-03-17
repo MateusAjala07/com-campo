@@ -145,7 +145,7 @@ export default function Sincronismo() {
           await sincronizarOcorrencias();
           await sincronizarLancamentosBaixas();
           await sincronizarClimaticos();
-          Alert.alert("Sincronizados com Sucesso","Todos sincronizado com sucesso!");
+          Alert.alert("Sincronizados com Sucesso","Dados sincronizados com sucesso!");
           break;
         default:
           break;
