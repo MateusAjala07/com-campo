@@ -225,7 +225,7 @@ export default function ModalRegistrarSaidasEstoque({ isOpen, setIsOpen }) {
           <View className="flex flex-row justify-between">
             <Button
               texto={aba === "Lançamento1" ? "Cancelar" : "Voltar"}
-              variant="secondary"
+              variant="cancel"
               onPress={handleVoltar}
             />
             <Button texto="Avançar" onPress={handleAvancar} />

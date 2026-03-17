@@ -96,7 +96,7 @@ export default function ModalConexao({ isOpen, setIsOpen }) {
           </View>
           <View className="gap-y-2">
             <Button texto="Gravar" onPress={handleGravarConexao} />
-            <Button texto="Cancelar" variant="outline" onPress={() => setIsOpen(false)} />
+            <Button texto="Cancelar" variant="cancel" onPress={() => setIsOpen(false)} />
           </View>
         </View>
       </SafeAreaView>
