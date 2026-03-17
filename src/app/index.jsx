@@ -242,7 +242,7 @@ export default function Login() {
     inicializarLogin();
   }, []);
 
-  const insets = useSafeAreaInsets()
+  const insets = useSafeAreaInsets();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#f4f6f8", paddingHorizontal: 16 }}>
       <StatusBar style="dark" />
