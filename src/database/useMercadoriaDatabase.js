@@ -85,7 +85,7 @@ export default function useMercadoriaDatabase() {
   async function consultarProdutosLocal(coluna = "*", tipoItem) {
     return await db.getAllAsync(
       `
-        SELECT ${coluna}
+        SELECT ${coluna} 
           FROM tbmercadorias
         WHERE codclasselan = 1
           AND tipitem = ?

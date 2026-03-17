@@ -51,7 +51,7 @@ export default function Select({
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {
-          onChange(item[config.value]);
+          onChange(item);
           setIsFocus(false);
         }}
         renderItem={renderItem}

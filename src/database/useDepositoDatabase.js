@@ -16,7 +16,7 @@ export default function useDepositoDatabase() {
       if (!redeEServidor.ativo) throw redeEServidor.mensagem;
 
       const depositos = await consultarDepositosServidor();
-      const estoque = await consultarEstoquesServidor();      
+      const estoque = await consultarEstoquesServidor();
       await db.runAsync("BEGIN");
 
       try {
@@ -66,5 +66,28 @@ export default function useDepositoDatabase() {
     }
   }
 
-  return { atualizarDepositosLocal };
+  async function consultarDepositosLocal(codDep) {
+    try {
+      if (!codDep) {
+        return await db.getAllAsync(
+          `
+            SELECT coddep,nomdep,numcompeso
+            FROM tbdepositos
+          `,
+        );
+      } else {
+        return await db.getAllAsync(
+          `
+            SELECT coddep,nomdep,numcompeso
+            FROM tbdepositos WHERE coddep = ?
+          `,
+          [codDep],
+        );
+      }
+    } catch (error) {
+      throw new Error("Erro ao listar depositos");
+    }
+  }
+
+  return { atualizarDepositosLocal, consultarDepositosLocal };
 }

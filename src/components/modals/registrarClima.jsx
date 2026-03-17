@@ -116,7 +116,7 @@ export default function ModalRegistrarClima({
               <Select
                 label="Pluviômetro"
                 data={dataPluviometro}
-                value={pluviometro}
+                value={pluviometro?.idpluv ?? ""}
                 onChange={setPluviometro}
                 placeholder="Selecione o pluviômetro"
                 config={{ label: "despluv", value: "idpluv" }}
@@ -129,6 +129,7 @@ export default function ModalRegistrarClima({
                 showSoftInputOnFocus={false}
                 onPressIn={() => setIsCalenarioOpen(true)}
               />
+
               {isCalendarioOpen && (
                 <DateTimePicker
                   testID="dateTimePicker"

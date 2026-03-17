@@ -61,11 +61,12 @@ export default function Inicio() {
           texto="Reg. Baixa de Estoque"
           navigate="/registros-baixa-de-estoque"
         />
-        {/* <CardIcone
+        <CardIcone
           icon={<Fuel size={30} color={"#47a603"} />}
           texto="Abastecimentos"
           navigate="/abastecimentos"
         />
+        {/* 
         <CardIcone
           icon={<PackageOpen size={30} color={"#47a603"} />}
           texto="Consultar Estoque"

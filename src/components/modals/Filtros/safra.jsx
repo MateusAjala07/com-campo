@@ -45,7 +45,7 @@ export default function ModalFiltroSafras({ isOpen, setIsOpen }) {
               <Select
                 label="Safra"
                 data={dataSafra}
-                value={safra}
+                value={safra?.id ?? ""}
                 onChange={setSafra}
                 placeholder="Selecione a safra"
                 config={{ label: "descricao", value: "id" }}
