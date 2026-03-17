@@ -45,7 +45,7 @@ export default function Inicio() {
         voltar={false}
         menu={() => setIsMenuOpen(!isMenuOpen)}
       />
-      <View className="p-4 flex flex-row gap-2 flex-wrap">
+      <View className="p-4 flex flex-row justify-between gap-y-4 flex-wrap">
         {/* <CardIcone
           icon={<MapPinned size={30} color={"#47a603"} />}
           texto="Ocorrências"
