@@ -66,12 +66,12 @@ export default function Inicio() {
           texto="Abastecimentos"
           navigate="/abastecimentos"
         />
-        {/* 
+        
         <CardIcone
           icon={<PackageOpen size={30} color={"#47a603"} />}
           texto="Consultar Estoque"
           navigate="/consultar-estoque"
-        /> */}
+        />
       </View>
     </SafeAreaView>
   );
